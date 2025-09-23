@@ -1,0 +1,19 @@
+{
+  "name": "ascension2",
+  "version": "1.0.0",
+  "description": "A progression-based RPG game with MERN stack",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run dev\" \"npm run client\"",
+    "server": "cd backend && npm run dev",
+    "client": "cd frontend && npm start",
+    "mobile": "cd mobile && npm start",
+    "install-all": "npm install && cd backend && npm install && cd ../frontend && npm install && cd ../mobile && npm install"
+  },
+  "keywords": ["game", "rpg", "mern", "react", "node"],
+  "author": "",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.0"
+  }
+}
