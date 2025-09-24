@@ -10,6 +10,7 @@ import authRoutes from './routes/auth.js';
 import characterRoutes from './routes/characters.js';
 import gatheringRoutes from './routes/gathering.js';
 import passwordResetRoutes from './routes/passwordReset.js';
+import battleRoutes from './routes/battle.js';
 
 const app = express();
 
@@ -42,6 +43,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/characters', characterRoutes);
 app.use('/api/gathering', gatheringRoutes);
 app.use('/api/password-reset', passwordResetRoutes);
+app.use('/api/battle', battleRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {
