@@ -1,7 +1,7 @@
 import Character from '../models/Character.js';
 import ActivityLog from '../models/ActivityLog.js';
 import BattleSession from '../models/BattleSession.js';
-import { executeSpell } from '../utils/battleCalculations.js';
+import { executeSpell, calculateCharacterHealth, calculateTierLevel } from '../utils/battleCalculations.js';
 import { BATTLE_CONFIG } from '../utils/battleConfig.js';
 
 export const startMinionBattle = async (character, tier) => {
@@ -16,12 +16,14 @@ export const startMinionBattle = async (character, tier) => {
     { active: false }
   );
   
+  const characterHealth = calculateCharacterHealth(character);
+  
   const battleSession = await BattleSession.create({
     characterId: character._id,
     tier: tier,
     battleType: 'minion',
     enemyHealth: minion.health,
-    characterHealth: 100,
+    characterHealth: characterHealth,
     turn: 1,
     battleLog: []
   });
@@ -33,8 +35,8 @@ export const startMinionBattle = async (character, tier) => {
       enemyMaxHealth: minion.health,
       enemyCurrentHealth: minion.health,
       enemyDamage: minion.damage,
-      characterMaxHealth: 100,
-      characterCurrentHealth: 100,
+      characterMaxHealth: characterHealth,
+      characterCurrentHealth: characterHealth,
       turn: 1
     }
   };
@@ -52,12 +54,14 @@ export const startBossBattle = async (character, tier) => {
     { active: false }
   );
   
+  const characterHealth = calculateCharacterHealth(character);
+  
   const battleSession = await BattleSession.create({
     characterId: character._id,
     tier: tier,
     battleType: 'boss',
     enemyHealth: boss.health,
-    characterHealth: 100,
+    characterHealth: characterHealth,
     turn: 1,
     battleLog: []
   });
@@ -69,8 +73,8 @@ export const startBossBattle = async (character, tier) => {
       enemyMaxHealth: boss.health,
       enemyCurrentHealth: boss.health,
       enemyDamage: boss.damage,
-      characterMaxHealth: 100,
-      characterCurrentHealth: 100,
+      characterMaxHealth: characterHealth,
+      characterCurrentHealth: characterHealth,
       turn: 1
     }
   };
@@ -91,14 +95,17 @@ export const processBattleTurn = async (character, battleId, spellType) => {
     ? BATTLE_CONFIG.minions[battleSession.tier]
     : BATTLE_CONFIG.bosses[battleSession.tier];
     
+  const tierLevel = calculateTierLevel(character);
   const spellResult = executeSpell(spellType, character, battleSession.tier);
   
   battleSession.battleLog.push({
     turn: battleSession.turn,
     spellType,
-    spellResult
+    spellResult,
+    tierLevel
   });
   
+  // Player attacks first
   if (spellResult.hit) {
     battleSession.enemyHealth -= spellResult.damage;
   }
@@ -106,11 +113,57 @@ export const processBattleTurn = async (character, battleId, spellType) => {
   let battleWon = false;
   let battleLost = false;
   
+  // Check if enemy is defeated
   if (battleSession.enemyHealth <= 0) {
     battleWon = true;
     battleSession.active = false;
   } else {
-    battleSession.characterHealth -= enemy.damage;
+    // Enemy attacks back (unless it's a boss with special mechanics)
+    if (battleSession.battleType === 'boss') {
+      // Boss special mechanics based on player tier level
+      let bossDamage = enemy.damage;
+      
+      if (tierLevel === 0) {
+        // Boss gets damage boost if player has no tier 1 items
+        bossDamage = Math.floor(bossDamage * 1.3); // 30% damage boost
+        if (Math.random() < (enemy.hitRate || 1.0)) {
+          battleSession.characterHealth -= bossDamage;
+        }
+      } else if (tierLevel === 1) {
+        // Boss attacks with reduced hit rate for 1 tier item
+        let adjustedHitRate = (enemy.hitRate || 1.0) * 0.5; // 50% reduction
+        if (Math.random() < adjustedHitRate) {
+          battleSession.characterHealth -= bossDamage;
+        }
+      } else if (tierLevel >= 2) {
+        // For 2+ tier items, boss has significant miss chance
+        const bossMissChance = 0.5; // 50% miss chance
+        let adjustedHitRate = (enemy.hitRate || 1.0) * 0.3; // 70% reduction
+        if (Math.random() > bossMissChance && Math.random() < adjustedHitRate) {
+          battleSession.characterHealth -= bossDamage;
+        }
+      }
+    } else {
+      // Minion attacks with tier-based hit rate adjustment
+      let adjustedHitRate = enemy.hitRate || 1.0;
+      
+      // Adjust hit rate based on player tier level
+      if (tierLevel === 0) {
+        // Increase hit rate for 0 tier items to make it much harder
+        adjustedHitRate *= 1.3;
+      } else if (tierLevel === 1) {
+        // Reduce hit rate for 1 tier item
+        adjustedHitRate *= 0.8;
+      } else if (tierLevel >= 2) {
+        // Significantly reduce hit rate for 2+ tier items
+        adjustedHitRate *= 0.4;
+      }
+      
+      if (Math.random() < adjustedHitRate) {
+        battleSession.characterHealth -= enemy.damage;
+      }
+    }
+    
     if (battleSession.characterHealth <= 0) {
       battleLost = true;
       battleSession.active = false;
@@ -176,6 +229,8 @@ export const processBattleTurn = async (character, battleId, spellType) => {
   character.lastActivity = new Date();
   await character.save();
   
+  const characterMaxHealth = calculateCharacterHealth(character);
+  
   return {
     battleWon,
     battleLost,
@@ -187,7 +242,7 @@ export const processBattleTurn = async (character, battleId, spellType) => {
       enemyMaxHealth: enemy.health,
       enemyCurrentHealth: Math.max(0, battleSession.enemyHealth),
       enemyDamage: enemy.damage,
-      characterMaxHealth: 100,
+      characterMaxHealth: characterMaxHealth,
       characterCurrentHealth: Math.max(0, battleSession.characterHealth),
       turn: battleSession.turn - 1
     },

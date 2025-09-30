@@ -1,26 +1,55 @@
 import { BATTLE_CONFIG } from './battleConfig.js';
+import { UPGRADE_CONFIG } from './upgradeConfig.js';
+
+export const calculateCharacterHealth = (character) => {
+  const baseHealth = BATTLE_CONFIG.baseHealth; // 10 HP base
+  let healthBonus = 0;
+
+  Object.entries(character.equipment).forEach(([item, stats]) => {
+    if (stats.infused) {
+      const bonus = UPGRADE_CONFIG.equipmentBonuses[item];
+      const tierIndex = Math.min(stats.tier, bonus.health.length - 1);
+      healthBonus += bonus.health[tierIndex]; // Tier-based health bonus
+    }
+  });
+
+  return baseHealth + healthBonus;
+};
+
+export const calculateTierLevel = (character) => {
+  // Count how many tier 1+ items the character has
+  let tierItems = 0;
+  Object.entries(character.equipment).forEach(([item, stats]) => {
+    if (stats.infused && stats.tier >= 1) {
+      tierItems++;
+    }
+  });
+  return tierItems;
+};
 
 const calculateSpellDamage = (spellType, character, tier) => {
   const spell = BATTLE_CONFIG.spells[spellType];
   if (!spell) {
     throw new Error('Invalid spell type');
   }
-  
+
   let damage = spell.baseDamage;
   let missChance = spell.missChance;
   let critChance = spell.critChance;
-  
+
+  // Apply equipment damage bonuses (tier-based bonuses)
   Object.entries(character.equipment).forEach(([item, stats]) => {
     if (stats.infused) {
-      const bonus = BATTLE_CONFIG.equipmentBonuses[item];
-      damage += Math.floor(damage * bonus.damage);
-      missChance = Math.max(0, missChance - bonus.accuracy);
+      const bonus = UPGRADE_CONFIG.equipmentBonuses[item];
+      const tierIndex = Math.min(stats.tier, bonus.damage.length - 1);
+      damage += bonus.damage[tierIndex]; // Tier-based damage bonus
     }
   });
-  
+
+  // Tier penalty for higher tier enemies
   const tierPenalty = tier * 0.05;
   missChance = Math.min(0.5, missChance + tierPenalty);
-  
+
   return {
     baseDamage: damage,
     missChance,

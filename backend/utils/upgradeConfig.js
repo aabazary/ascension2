@@ -23,12 +23,27 @@ export const UPGRADE_CONFIG = {
   },
   
   resourceCosts: {
-    0: { gathering: 5, minion: 3, boss: 2 },
-    1: { gathering: 8, minion: 5, boss: 3 },
-    2: { gathering: 12, minion: 8, boss: 5 },
-    3: { gathering: 18, minion: 12, boss: 8 },
-    4: { gathering: 25, minion: 18, boss: 12 }
+    0: { gathering: 50, minion: 30, boss: 20 },
+    1: { gathering: 80, minion: 50, boss: 30 },
+    2: { gathering: 120, minion: 80, boss: 50 },
+    3: { gathering: 180, minion: 120, boss: 80 },
+    4: { gathering: 250, minion: 180, boss: 120 }
   },
+
+          equipmentBonuses: {
+            ring: { 
+              damage: [0, 0.14, 0.35, 0.9, 1.7],     // +0, +0.14, +0.35, +0.9, +1.7 damage per tier
+              health: [0, 0.24, 0.65, 1.7, 2.7]     // +0, +0.24, +0.65, +1.7, +2.7 health per tier
+            },
+            cloak: { 
+              damage: [0, 0.14, 0.35, 0.9, 1.7],     // +0, +0.14, +0.35, +0.9, +1.7 damage per tier
+              health: [0, 0.24, 0.65, 1.7, 2.7]     // +0, +0.24, +0.65, +1.7, +2.7 health per tier
+            },
+            belt: { 
+              damage: [0, 0.14, 0.35, 0.9, 1.7],     // +0, +0.14, +0.35, +0.9, +1.7 damage per tier
+              health: [0, 0.24, 0.65, 1.7, 2.7]     // +0, +0.24, +0.65, +1.7, +2.7 health per tier
+            }
+          },
   
   maxTier: 5,
   validEquipmentTypes: ['ring', 'cloak', 'belt']
