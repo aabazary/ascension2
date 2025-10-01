@@ -34,22 +34,36 @@ const LandingPage = ({ setIsAuthenticated }: LandingPageProps) => {
     navigate('/dashboard');
   };
 
+  const handleGoToDashboard = () => {
+    const user = localStorage.getItem('user');
+    if (user) {
+      navigate('/dashboard');
+    } else {
+      setIsAuthModalOpen(true);
+    }
+  };
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
       <header className="p-6 flex justify-between items-center border-b-2 border-dark-border">
-        <div className="flex items-center gap-4">
+        <button 
+          onClick={() => navigate('/')}
+          className="flex items-center gap-4 hover:opacity-80 transition-opacity"
+        >
           <div className="w-12 h-12 bg-gradient-to-br from-neon-purple to-neon-pink rounded-lg flex items-center justify-center shadow-neon">
             <span className="text-2xl">🔮</span>
           </div>
           <h1 className="font-arcade text-xl neon-text">ASCENSION</h1>
-        </div>
-        <button
-          onClick={() => setIsAuthModalOpen(true)}
-          className="arcade-button"
-        >
-          LOGIN / SIGN UP
         </button>
+        <div className="flex gap-4">
+          <button
+            onClick={handleGoToDashboard}
+            className="arcade-button"
+          >
+            DASHBOARD
+          </button>
+        </div>
       </header>
 
       {/* Main Content */}

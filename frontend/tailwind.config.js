@@ -30,6 +30,7 @@ export default {
         'pulse-neon': 'pulse-neon 2s ease-in-out infinite',
         'flicker': 'flicker 3s linear infinite',
         'slide-up': 'slide-up 0.3s ease-out',
+        'shake': 'shake 0.2s ease-in-out infinite',
       },
       keyframes: {
         'pulse-neon': {
@@ -46,6 +47,11 @@ export default {
         'slide-up': {
           '0%': { transform: 'translateY(100%)' },
           '100%': { transform: 'translateY(0)' },
+        },
+        'shake': {
+          '0%, 100%': { transform: 'rotate(0deg)' },
+          '25%': { transform: 'rotate(-8deg)' },
+          '75%': { transform: 'rotate(8deg)' },
         },
       },
     },

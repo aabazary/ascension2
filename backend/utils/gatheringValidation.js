@@ -8,7 +8,13 @@ export const validateGatheringAttempt = (attempt, tier) => {
     return { valid: false, reason: 'Invalid tier configuration' };
   }
   
-  if (timeSpent < 10000 || timeSpent > 20000) {
+  // Calculate expected time range based on tier config
+  // Minimum: initial delay (1000ms) + at least 1 button interaction
+  const minTime = 1000;
+  // Maximum: initial delay + (buttons × (window + delay between rounds)) + buffer
+  const maxTime = 1000 + (tierConfig.totalButtons * (tierConfig.buttonWindow + 1500)) + 5000;
+  
+  if (timeSpent < minTime || timeSpent > maxTime) {
     return { valid: false, reason: 'Invalid time duration' };
   }
   
@@ -31,7 +37,10 @@ export const validateGatheringAttempt = (attempt, tier) => {
     return { valid: false, reason: 'Invalid timestamps' };
   }
   
-  if (endTime - startTime !== timeSpent) {
+  // Allow small timing differences (up to 100ms) due to JS execution timing
+  const calculatedTime = endTime - startTime;
+  const timeDifference = Math.abs(calculatedTime - timeSpent);
+  if (timeDifference > 100) {
     return { valid: false, reason: 'Time mismatch' };
   }
   

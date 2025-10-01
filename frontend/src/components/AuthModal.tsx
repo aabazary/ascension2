@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import axios from 'axios';
+import api from '../utils/api';
 
 interface AuthModalProps {
   isOpen: boolean;
@@ -23,15 +23,14 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }: AuthModalProps) => {
     setLoading(true);
 
     try {
-      const endpoint = isLogin ? '/api/auth/login' : '/api/auth/register';
+      const endpoint = isLogin ? '/auth/login' : '/auth/register';
       const payload = isLogin 
         ? { email: formData.email, password: formData.password }
         : formData;
 
-      const response = await axios.post(endpoint, payload);
+      const response = await api.post(endpoint, payload);
       
       if (response.data.success) {
-        localStorage.setItem('token', response.data.token);
         localStorage.setItem('user', JSON.stringify(response.data.user));
         onAuthSuccess();
         onClose();

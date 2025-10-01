@@ -155,6 +155,36 @@ characterSchema.virtual('successRate').get(function() {
   return total > 0 ? (this.stats.wins / total) * 100 : 0;
 });
 
+// Virtual for totalWins (alias for stats.wins)
+characterSchema.virtual('stats.totalWins').get(function() {
+  return this.stats.wins;
+});
+
+// Transform resources array to object format for frontend
+characterSchema.methods.toJSON = function() {
+  const obj = this.toObject({ virtuals: true });
+  
+  // Transform resources array to object format
+  const resourcesObj = {
+    gathering: {},
+    minion: {},
+    boss: {}
+  };
+  
+  if (this.resources && Array.isArray(this.resources)) {
+    this.resources.forEach(resource => {
+      if (resourcesObj[resource.type]) {
+        resourcesObj[resource.type][resource.tier] = resource.count;
+      }
+    });
+  }
+  
+  obj.resources = resourcesObj;
+  obj.stats.totalWins = this.stats.wins;
+  
+  return obj;
+};
+
 // Method to get resource count by type and tier
 characterSchema.methods.getResourceCount = function(type, tier) {
   const resource = this.resources.find(r => r.type === type && r.tier === tier);

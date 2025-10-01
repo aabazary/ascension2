@@ -66,14 +66,14 @@ const register = asyncHandler(async (req, res) => {
   res.cookie('accessToken', accessToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    sameSite: 'lax',
     maxAge: 15 * 60 * 1000
   });
 
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    sameSite: 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000
   });
 
@@ -146,14 +146,14 @@ const login = asyncHandler(async (req, res) => {
   res.cookie('accessToken', accessToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    sameSite: 'lax',
     maxAge: 15 * 60 * 1000
   });
 
   res.cookie('refreshToken', refreshToken, {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
+    sameSite: 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000
   });
 
@@ -179,45 +179,53 @@ const refresh = asyncHandler(async (req, res) => {
     });
   }
 
-  // Verify refresh token
-  const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
-  const user = await User.findById(decoded.userId);
+  try {
+    // Verify refresh token
+    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
+    const user = await User.findById(decoded.userId);
 
-  if (!user) {
+    if (!user) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid refresh token'
+      });
+    }
+
+    // Check if refresh token exists in user's tokens
+    const tokenExists = user.refreshTokens.some(token => token.token === refreshToken);
+    if (!tokenExists) {
+      return res.status(401).json({
+        success: false,
+        message: 'Invalid refresh token'
+      });
+    }
+
+    // Generate new access token
+    const accessToken = jwt.sign(
+      { userId: user._id, email: user.email },
+      process.env.JWT_SECRET,
+      { expiresIn: '15m' }
+    );
+
+    // Set new access token cookie
+    res.cookie('accessToken', accessToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 15 * 60 * 1000
+    });
+
+    res.json({
+      success: true,
+      message: 'Token refreshed successfully'
+    });
+  } catch (error) {
+    // Token verification failed (expired, invalid, etc.)
     return res.status(401).json({
       success: false,
-      message: 'Invalid refresh token'
+      message: 'Invalid or expired refresh token'
     });
   }
-
-  // Check if refresh token exists in user's tokens
-  const tokenExists = user.refreshTokens.some(token => token.token === refreshToken);
-  if (!tokenExists) {
-    return res.status(401).json({
-      success: false,
-      message: 'Invalid refresh token'
-    });
-  }
-
-  // Generate new access token
-  const accessToken = jwt.sign(
-    { userId: user._id, email: user.email },
-    process.env.JWT_SECRET,
-    { expiresIn: '15m' }
-  );
-
-  // Set new access token cookie
-  res.cookie('accessToken', accessToken, {
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production',
-    sameSite: 'strict',
-    maxAge: 15 * 60 * 1000
-  });
-
-  res.json({
-    success: true,
-    message: 'Token refreshed successfully'
-  });
 });
 
 // Logout user

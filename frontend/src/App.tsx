@@ -2,14 +2,15 @@ import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-d
 import { useState, useEffect } from 'react';
 import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
+import GatheringPage from './pages/GatheringPage';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
   useEffect(() => {
-    // Check if user is authenticated (check localStorage for token)
-    const token = localStorage.getItem('token');
-    setIsAuthenticated(!!token);
+    // Check if user is authenticated (check localStorage for user data)
+    const user = localStorage.getItem('user');
+    setIsAuthenticated(!!user);
   }, []);
 
   return (
@@ -22,6 +23,10 @@ function App() {
         <Route 
           path="/dashboard" 
           element={isAuthenticated ? <Dashboard setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/" />} 
+        />
+        <Route 
+          path="/gathering" 
+          element={isAuthenticated ? <GatheringPage /> : <Navigate to="/" />} 
         />
       </Routes>
     </Router>

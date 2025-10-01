@@ -1,4 +1,5 @@
 import Character from '../models/Character.js';
+import User from '../models/User.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
 
 // Get all characters for user
@@ -87,6 +88,12 @@ const createCharacter = asyncHandler(async (req, res) => {
 
   await character.save();
 
+  // Add character to user's characters array
+  await User.findByIdAndUpdate(
+    req.user.userId,
+    { $push: { characters: character._id } }
+  );
+
   res.status(201).json({
     success: true,
     message: 'Character created successfully',
@@ -165,6 +172,12 @@ const deleteCharacter = asyncHandler(async (req, res) => {
       message: 'Character not found'
     });
   }
+
+  // Remove character from user's characters array
+  await User.findByIdAndUpdate(
+    req.user.userId,
+    { $pull: { characters: req.params.id } }
+  );
 
   res.json({
     success: true,
