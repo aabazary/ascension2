@@ -1,7 +1,7 @@
 import Character from '../models/Character.js';
 import ActivityLog from '../models/ActivityLog.js';
 import BattleSession from '../models/BattleSession.js';
-import { executeSpell, calculateCharacterHealth, calculateTierLevel } from '../utils/battleCalculations.js';
+import { executeSpell, calculateCharacterHealth, calculateCharacterPower, calculateTierLevel } from '../utils/battleCalculations.js';
 import { BATTLE_CONFIG } from '../utils/battleConfig.js';
 
 export const startMinionBattle = async (character, tier) => {

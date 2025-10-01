@@ -32,18 +32,28 @@ export const UPGRADE_CONFIG = {
 
           equipmentBonuses: {
             ring: { 
-              damage: [0, 0.14, 0.35, 0.9, 1.7],     // +0, +0.14, +0.35, +0.9, +1.7 damage per tier
-              health: [0, 0.24, 0.65, 1.7, 2.7]     // +0, +0.24, +0.65, +1.7, +2.7 health per tier
+              damage: [0, 4, 9, 20, 45, 100],       // Tier 0-5: +0, +4, +9, +20, +45, +100 power per tier
+              health: [0, 20, 45, 100, 225, 500]    // Tier 0-5: +0, +20, +45, +100, +225, +500 health per tier
             },
             cloak: { 
-              damage: [0, 0.14, 0.35, 0.9, 1.7],     // +0, +0.14, +0.35, +0.9, +1.7 damage per tier
-              health: [0, 0.24, 0.65, 1.7, 2.7]     // +0, +0.24, +0.65, +1.7, +2.7 health per tier
+              damage: [0, 4, 9, 20, 45, 100],       // Tier 0-5: +0, +4, +9, +20, +45, +100 power per tier
+              health: [0, 20, 45, 100, 225, 500]    // Tier 0-5: +0, +20, +45, +100, +225, +500 health per tier
             },
             belt: { 
-              damage: [0, 0.14, 0.35, 0.9, 1.7],     // +0, +0.14, +0.35, +0.9, +1.7 damage per tier
-              health: [0, 0.24, 0.65, 1.7, 2.7]     // +0, +0.24, +0.65, +1.7, +2.7 health per tier
+              damage: [0, 4, 9, 20, 45, 100],       // Tier 0-5: +0, +4, +9, +20, +45, +100 power per tier
+              health: [0, 20, 45, 100, 225, 500]    // Tier 0-5: +0, +20, +45, +100, +225, +500 health per tier
             }
           },
+          
+          // Set bonuses for having all 3 pieces at each tier level
+          setBonuses: [
+            { damage: 0, health: 0 },       // Tier 0: no set bonus
+            { damage: 20, health: 100 },    // Tier 1: +20 power, +100 health
+            { damage: 45, health: 225 },    // Tier 2: +45 power, +225 health
+            { damage: 100, health: 500 },   // Tier 3: +100 power, +500 health
+            { damage: 225, health: 1125 },  // Tier 4: +225 power, +1125 health
+            { damage: 500, health: 2500 }   // Tier 5: +500 power, +2500 health
+          ],
   
   maxTier: 5,
   validEquipmentTypes: ['ring', 'cloak', 'belt']
