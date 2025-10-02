@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthModal from '../components/AuthModal';
+import api from '../utils/api';
 
 interface LandingPageProps {
   setIsAuthenticated: (value: boolean) => void;
@@ -8,6 +9,7 @@ interface LandingPageProps {
 
 interface HighScore {
   username: string;
+  characterName: string;
   totalWins: number;
   currentTier: number;
 }
@@ -18,16 +20,27 @@ const LandingPage = ({ setIsAuthenticated }: LandingPageProps) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // TODO: Fetch high scores from API
-    // For now, using mock data
-    setHighScores([
-      { username: 'DragonSlayer', totalWins: 150, currentTier: 5 },
-      { username: 'MageKing', totalWins: 120, currentTier: 4 },
-      { username: 'ElementMaster', totalWins: 95, currentTier: 4 },
-      { username: 'ShadowCaster', totalWins: 78, currentTier: 3 },
-      { username: 'ArcaneWizard', totalWins: 65, currentTier: 3 },
-    ]);
+    fetchLeaderboard();
   }, []);
+
+  const fetchLeaderboard = async () => {
+    try {
+      const response = await api.get('/leaderboard?limit=5');
+      if (response.data.success) {
+        setHighScores(response.data.leaderboard);
+      }
+    } catch (error) {
+      console.error('Failed to fetch leaderboard:', error);
+      // Fallback to mock data if API fails
+      setHighScores([
+        { username: 'DragonSlayer', characterName: 'DragonMaster', totalWins: 150, currentTier: 5 },
+        { username: 'MageKing', characterName: 'ShadowLord', totalWins: 120, currentTier: 4 },
+        { username: 'ElementMaster', characterName: 'FireKnight', totalWins: 95, currentTier: 4 },
+        { username: 'ShadowCaster', characterName: 'IceMage', totalWins: 78, currentTier: 3 },
+        { username: 'ArcaneWizard', characterName: 'StormCaller', totalWins: 65, currentTier: 3 },
+      ]);
+    }
+  };
 
   const handleAuthSuccess = () => {
     setIsAuthenticated(true);
@@ -117,7 +130,8 @@ const LandingPage = ({ setIsAuthenticated }: LandingPageProps) => {
                     </span>
                   </div>
                   <div className="font-arcade text-sm text-white truncate">
-                    {score.username}
+                    <div>{score.username}</div>
+                    <div className="text-xs text-gray-400">{score.characterName}</div>
                   </div>
                   <div className="text-center">
                     <span className="text-neon-green font-bold text-lg">

@@ -12,6 +12,7 @@ import gatheringRoutes from './routes/gathering.js';
 import passwordResetRoutes from './routes/passwordReset.js';
 import battleRoutes from './routes/battle.js';
 import upgradeRoutes from './routes/upgrade.js';
+import leaderboardRoutes from './routes/leaderboard.js';
 
 const app = express();
 
@@ -51,6 +52,7 @@ app.use('/api/gathering', gatheringRoutes);
 app.use('/api/password-reset', passwordResetRoutes);
 app.use('/api/battle', battleRoutes);
 app.use('/api/upgrade', upgradeRoutes);
+app.use('/api/leaderboard', leaderboardRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

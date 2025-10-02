@@ -53,8 +53,6 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
     try {
       const response = await api.get('/characters');
 
-      console.log('Characters response:', response.data);
-
       if (response.data.success) {
         setCharacters(response.data.characters);
         // Auto-select first character if available
@@ -77,7 +75,6 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
       console.error('Logout error:', error);
     } finally {
       // Clear local storage regardless of API call success
-      localStorage.removeItem('token');
       localStorage.removeItem('user');
       setIsAuthenticated(false);
       navigate('/');

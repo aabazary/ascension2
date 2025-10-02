@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../utils/api';
+import { TIER_THEMES } from '../utils/gatheringThemes';
 
 interface Character {
   _id: string;
@@ -249,6 +250,7 @@ const GatheringPage = () => {
   }
 
   const config = gatheringConfig?.tiers[selectedTier];
+  const currentTheme = TIER_THEMES[selectedTier];
 
   return (
     <div className="min-h-screen">
@@ -277,34 +279,40 @@ const GatheringPage = () => {
           {/* Title */}
           <div className="text-center mb-8">
             <h2 className="font-arcade text-3xl neon-text mb-2">
-              GATHERING RITUAL
+              {currentTheme.name.toUpperCase()} DRAGON GATHERING
             </h2>
             <p className="text-gray-400">Character: {character.name}</p>
-            <div className="h-1 w-32 mx-auto mt-4 bg-gradient-to-r from-neon-green to-neon-blue rounded-full"></div>
+            <div className={`h-1 w-32 mx-auto mt-4 bg-gradient-to-r ${currentTheme.color} rounded-full ${currentTheme.glow}`}></div>
           </div>
 
           {/* Tier Selection */}
           <div className="arcade-panel mb-8">
             <h3 className="font-arcade text-sm text-neon-green mb-4 text-center">
-              SELECT TIER
+              SELECT DRAGON TYPE
             </h3>
-            <div className="flex gap-2 justify-center">
-              {[0, 1, 2, 3, 4, 5].map((tier) => (
-                <button
-                  key={tier}
-                  onClick={() => !isPlaying && tier <= character.currentTier && setSelectedTier(tier)}
-                  disabled={tier > character.currentTier || isPlaying}
-                  className={`px-4 py-2 font-arcade text-xs rounded-lg transition-all ${
-                    selectedTier === tier
-                      ? 'bg-neon-green text-dark-bg shadow-neon'
-                      : tier <= character.currentTier
-                      ? 'bg-dark-bg border border-dark-border hover:border-neon-green'
-                      : 'bg-dark-bg border border-dark-border opacity-30 cursor-not-allowed'
-                  }`}
-                >
-                  T{tier}
-                </button>
-              ))}
+            <div className="grid grid-cols-3 md:grid-cols-6 gap-3 justify-center">
+              {[0, 1, 2, 3, 4, 5].map((tier) => {
+                const theme = TIER_THEMES[tier];
+                return (
+                  <button
+                    key={tier}
+                    onClick={() => !isPlaying && tier <= character.currentTier && setSelectedTier(tier)}
+                    disabled={tier > character.currentTier || isPlaying}
+                    className={`relative px-3 py-3 font-arcade text-xs rounded-lg transition-all ${
+                      selectedTier === tier
+                        ? `bg-gradient-to-br ${theme.color} text-white ${theme.glow}`
+                        : tier <= character.currentTier
+                        ? 'bg-dark-bg border border-dark-border hover:border-opacity-50'
+                        : 'bg-dark-bg border border-dark-border opacity-30 cursor-not-allowed'
+                    }`}
+                    title={tier > character.currentTier ? 'Locked' : theme.name}
+                  >
+                    <div className="text-2xl mb-1">{theme.egg}</div>
+                    <div className="text-xs">T{tier}</div>
+                    <div className="text-[10px] opacity-70">{theme.name}</div>
+                  </button>
+                );
+              })}
             </div>
             {config && (
               <div className="mt-4 text-center text-sm text-gray-400">
@@ -315,13 +323,24 @@ const GatheringPage = () => {
 
           {/* Game Window */}
           <div className="arcade-panel mb-8">
-            <div className="relative aspect-video bg-dark-bg rounded-lg border-2 border-dark-border overflow-hidden">
+            <div className={`relative aspect-video bg-dark-bg rounded-lg border-2 ${currentTheme.borderColor} overflow-hidden ${shaking && isPlaying ? currentTheme.glow : ''}`}>
               {/* Game Area */}
               <div className="absolute inset-0 flex items-center justify-center">
                 {!isPlaying && !gameEnded ? (
                   <div className="text-center">
-                    <div className="text-6xl mb-4">🥚</div>
-                    <p className="text-gray-400 mb-6">Click the dragon egg when it shakes!</p>
+                    <div 
+                      className={`text-8xl mb-4 inline-block leading-[0] ${currentTheme.glow} filter drop-shadow-2xl`}
+                      style={{ 
+                        background: 'transparent',
+                        padding: 0,
+                        margin: '0 0 1rem 0',
+                        border: 'none'
+                      }}
+                    >
+                      {currentTheme.egg}
+                    </div>
+                    <p className="text-gray-400 mb-2 mt-4">Click the {currentTheme.name} essence when it shakes!</p>
+                    <p className="text-xs text-gray-500 mb-6">Don't click at the wrong time or you'll disturb the dragon!</p>
                     <button onClick={startGame} className="arcade-button">
                       START GATHERING
                     </button>
@@ -358,14 +377,23 @@ const GatheringPage = () => {
                 ) : (
                   <>
                     {/* Dragon Egg */}
-                    <button
+                    <div
                       onClick={handleEggClick}
-                      className={`relative transition-all duration-100 ${
+                      className={`cursor-pointer select-none text-[10rem] leading-[0] inline-block ${
                         shaking ? 'animate-shake' : ''
-                      }`}
+                      } ${
+                        clickable ? `${currentTheme.glow} scale-110 filter drop-shadow-2xl` : 'opacity-50 scale-100'
+                      } transition-all duration-200`}
+                      style={{ 
+                        background: 'transparent',
+                        padding: 0,
+                        margin: 0,
+                        border: 'none',
+                        outline: 'none'
+                      }}
                     >
-                      <div className="text-9xl">🥚</div>
-                    </button>
+                      {currentTheme.egg}
+                    </div>
 
                     {/* Feedback */}
                     {feedback && (
@@ -392,15 +420,18 @@ const GatheringPage = () => {
 
           {/* Instructions */}
           <div className="arcade-panel">
-            <h3 className="font-arcade text-sm text-neon-purple mb-4 text-center">
-              HOW TO PLAY
+            <h3 className={`font-arcade text-sm mb-4 text-center bg-gradient-to-r ${currentTheme.color} bg-clip-text text-transparent`}>
+              HOW TO GATHER {currentTheme.name.toUpperCase()} ESSENCE
             </h3>
             <div className="text-sm text-gray-400 space-y-2">
-              <p>• Watch the dragon egg carefully</p>
-              <p>• Click the egg ONLY when it shakes</p>
-              <p>• Clicking at wrong time = MISS</p>
-              <p>• Not clicking when shaking = MISS</p>
+              <p>• Watch the {currentTheme.name} essence carefully</p>
+              <p>• Click ONLY when it shakes and glows bright</p>
+              <p>• Clicking at wrong time = MISS (disturbs the dragon!)</p>
+              <p>• Not clicking when shaking = MISS (opportunity lost!)</p>
               <p>• Get {config ? Math.ceil(config.totalButtons * config.successThreshold) : 3} successes before 3 misses to win!</p>
+              <p className={`text-xs mt-3 pt-3 border-t ${currentTheme.borderColor} border-opacity-30`}>
+                Each dragon type requires different timing. Higher tiers = faster reactions needed!
+              </p>
             </div>
           </div>
         </div>
