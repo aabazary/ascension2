@@ -125,23 +125,13 @@ If you prefer to set up each part manually:
 ## Game Mechanics
 
 ### Elemental Dragons
-1. **Fire Dragon (Inferno Drake)**: Weak to water, resistant to fire
-2. **Water Dragon (Tsunami Serpent)**: Weak to earth, resistant to water
-3. **Earth Dragon (Mountain Wyrm)**: Weak to air, resistant to earth
-4. **Air Dragon (Storm Phoenix)**: Weak to lightning, resistant to air
-5. **Lightning Dragon (Thunder Dragon)**: Weak to ice, resistant to lightning
-6. **Ice Dragon (Frost Wyvern)**: Weak to fire, resistant to ice
-7. **Shadow Dragon (Void Master)**: Weak to light, resistant to shadow
+1. **Fire Dragon (Inferno Drake)**
+2. **Water Dragon (Tsunami Serpent)**
+3. **Earth Dragon (Mountain Wyrm)**
+4. **Lightning Dragon (Thunder Dragon)**
+5. **Ice Dragon (Frost Wyvern)**
+6. **Shadow Dragon (shadow Hydra)**
 
-### Avatar System
-- **Default**: Novice Mage - A young mage beginning their journey
-- **Fire**: Flame Warden - Master of fire and passion
-- **Water**: Tide Caller - Guardian of the deep waters
-- **Earth**: Stone Guardian - Protector of the earth's core
-- **Air**: Wind Walker - Rider of the eternal winds
-- **Lightning**: Storm Lord - Commander of thunder and lightning
-- **Ice**: Frost Sage - Keeper of eternal winter
-- **Shadow**: Void Master - The ultimate shadow mage
 
 ### Equipment Progression
 1. **Ring**: Improves all activities

@@ -14,8 +14,8 @@ const characterSchema = new mongoose.Schema({
   },
   avatar: {
     type: String,
-    default: 'default',
-    enum: ['default', 'fire', 'water', 'earth', 'air', 'lightning', 'ice', 'shadow']
+    default: 'earth',
+    enum: ['earth', 'fire', 'water', 'lightning', 'ice', 'shadow']
   },
   currentTier: {
     type: Number,

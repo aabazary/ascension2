@@ -1,46 +1,81 @@
 export const BATTLE_CONFIG = {
-  // Base character health
-  baseHealth: 100,
+  tiers: {
+    0: {
+      minionHealth: 50,
+      minionDamage: 15,
+      minionName: 'Earth Dragonling',
+      minionImage: '/dragonling/earth__dragonling.png'
+    },
+    1: {
+      minionHealth: 70,
+      minionDamage: 20,
+      minionName: 'Inferno Dragonling',
+      minionImage: '/dragonling/infero_dragonling.png'
+    },
+    2: {
+      minionHealth: 90,
+      minionDamage: 25,
+      minionName: 'Water Dragonling',
+      minionImage: '/dragonling/water_dragonling.png'
+    },
+    3: {
+      minionHealth: 120,
+      minionDamage: 30,
+      minionName: 'Lightning Dragonling',
+      minionImage: '/dragonling/lightning_dragonling.png'
+    },
+    4: {
+      minionHealth: 150,
+      minionDamage: 35,
+      minionName: 'Ice Dragonling',
+      minionImage: '/dragonling/ice_dragonling.png'
+    },
+    5: {
+      minionHealth: 200,
+      minionDamage: 40,
+      minionName: 'Shadow Dragonling',
+      minionImage: '/dragonling/void_dragonling.png'
+    }
+  },
   
   spells: {
-            blast: {
-              name: 'Blast',
-              baseDamage: 20.0, // Will be calculated from character power
-              hitRate: 0.20,    // 20% hit rate
-              critChance: 1.0,  // 100% crit when it hits
-              critMultiplier: 2.0
-            },
-            nova: {
-              name: 'Nova',
-              baseDamage: 20.0, // Will be calculated from character power
-              hitRate: 0.50,    // 50% hit rate
-              critChance: 0.30, // 30% crit when it hits
-              critMultiplier: 2.0
-            },
-            bolt: {
-              name: 'Bolt',
-              baseDamage: 20.0, // Will be calculated from character power
-              hitRate: 0.60,    // 60% hit rate
-              critChance: 1.0,  // 100% crit when it hits
-              critMultiplier: 2.0
-            }
+    blast: {
+      name: 'Blast',
+      emoji: '💥',
+      hitChance: 0.3,
+      baseDamage: 25,
+      critChance: 1.0,
+      description: 'A powerful energy blast'
+    },
+    nova: {
+      name: 'Nova',
+      emoji: '🌟',
+      hitChance: 0.5,
+      baseDamage: 35,
+      critChance: 0.3,
+      description: 'A devastating nova explosion'
+    },
+    bolt: {
+      name: 'Bolt',
+      emoji: '⚡',
+      hitChance: 0.6,
+      baseDamage: 20,
+      critChance: 0.0,
+      description: 'A quick lightning bolt'
+    }
   },
-  minions: {
-    0: { health: 200, damage: 25, hitRate: 0.80, name: 'Tier 0 Dragonling' },
-    1: { health: 450, damage: 55, hitRate: 0.80, name: 'Tier 1 Dragonling' },
-    2: { health: 1000, damage: 120, hitRate: 0.80, name: 'Tier 2 Dragonling' },
-    3: { health: 2250, damage: 270, hitRate: 0.80, name: 'Tier 3 Dragonling' },
-    4: { health: 5000, damage: 600, hitRate: 0.80, name: 'Tier 4 Dragonling' },
-    5: { health: 11250, damage: 1350, hitRate: 0.80, name: 'Tier 5 Dragonling' }
+  
+  player: {
+    baseHealth: 100,
+    baseDamage: 0 // Player damage comes from spells
   },
-  bosses: {
-    0: { health: 280, damage: 35, hitRate: 0.75, name: 'Tier 0 Dragon' },
-    1: { health: 630, damage: 75, hitRate: 0.75, name: 'Tier 1 Dragon' },
-    2: { health: 1400, damage: 170, hitRate: 0.75, name: 'Tier 2 Dragon' },
-    3: { health: 3150, damage: 380, hitRate: 0.75, name: 'Tier 3 Dragon' },
-    4: { health: 7000, damage: 850, hitRate: 0.75, name: 'Tier 4 Dragon' },
-    5: { health: 15750, damage: 1900, hitRate: 0.75, name: 'Tier 5 Dragon' }
-  },
-  // Equipment bonuses are now defined in upgradeConfig.js
-  // This is kept for backward compatibility but should use UPGRADE_CONFIG.equipmentBonuses
+  
+  avatars: {
+    earth: '/mages/earth_mage.png',
+    fire: '/mages/fire_mage.png',
+    water: '/mages/water_mage.png',
+    lightning: '/mages/lightning_mage.png',
+    ice: '/mages/ice_mage.png',
+    shadow: '/mages/shadow_mage.png'
+  }
 };

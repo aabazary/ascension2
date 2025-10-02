@@ -255,21 +255,22 @@ const GatheringPage = () => {
   return (
     <div className="min-h-screen">
       {/* Header */}
-      <header className="p-6 flex justify-between items-center border-b-2 border-dark-border">
+      <header className="p-3 sm:p-6 flex justify-between items-center border-b-2 border-dark-border">
         <button 
           onClick={() => navigate('/')}
-          className="flex items-center gap-4 hover:opacity-80 transition-opacity"
+          className="flex items-center gap-2 sm:gap-4 hover:opacity-80 transition-opacity"
         >
-          <div className="w-12 h-12 bg-gradient-to-br from-neon-purple to-neon-pink rounded-lg flex items-center justify-center shadow-neon">
-            <span className="text-2xl">🔮</span>
+          <div className="w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-br from-neon-purple to-neon-pink rounded-lg flex items-center justify-center shadow-neon">
+            <span className="text-lg sm:text-2xl">🔮</span>
           </div>
-          <h1 className="font-arcade text-xl neon-text">ASCENSION</h1>
+          <h1 className="font-arcade text-lg sm:text-xl neon-text">ASCENSION</h1>
         </button>
         <button
           onClick={() => navigate('/dashboard')}
-          className="arcade-button"
+          className="arcade-button text-xs sm:text-sm px-3 py-2 sm:px-4 sm:py-3"
         >
-          DASHBOARD
+          <span className="hidden sm:inline">DASHBOARD</span>
+          <span className="sm:hidden">DASH</span>
         </button>
       </header>
 
@@ -277,12 +278,12 @@ const GatheringPage = () => {
       <main className="container mx-auto px-4 py-12">
         <div className="max-w-4xl mx-auto">
           {/* Title */}
-          <div className="text-center mb-8">
-            <h2 className="font-arcade text-3xl neon-text mb-2">
+          <div className="text-center mb-6 sm:mb-8">
+            <h2 className="font-arcade text-xl sm:text-2xl md:text-3xl neon-text mb-2">
               {currentTheme.name.toUpperCase()} DRAGON GATHERING
             </h2>
-            <p className="text-gray-400">Character: {character.name}</p>
-            <div className={`h-1 w-32 mx-auto mt-4 bg-gradient-to-r ${currentTheme.color} rounded-full ${currentTheme.glow}`}></div>
+            <p className="text-gray-400 text-sm sm:text-base">Character: {character.name}</p>
+            <div className={`h-1 w-24 sm:w-32 mx-auto mt-3 sm:mt-4 bg-gradient-to-r ${currentTheme.color} rounded-full ${currentTheme.glow}`}></div>
           </div>
 
           {/* Tier Selection */}
@@ -315,8 +316,8 @@ const GatheringPage = () => {
               })}
             </div>
             {config && (
-              <div className="mt-4 text-center text-sm text-gray-400">
-                <p>Total Buttons: {config.totalButtons} | Success Needed: {Math.ceil(config.totalButtons * config.successThreshold)} | Window: {config.buttonWindow}ms | Max Misses: 3</p>
+              <div className="mt-4 text-center text-xs sm:text-sm text-gray-400 px-2">
+                <p className="break-words">Total Buttons: {config.totalButtons} | Success Needed: {Math.ceil(config.totalButtons * config.successThreshold)} | Window: {config.buttonWindow}ms | Max Misses: 3</p>
               </div>
             )}
           </div>
@@ -327,9 +328,9 @@ const GatheringPage = () => {
               {/* Game Area */}
               <div className="absolute inset-0 flex items-center justify-center">
                 {!isPlaying && !gameEnded ? (
-                  <div className="text-center">
+                  <div className="text-center p-4">
                     <div 
-                      className={`text-8xl mb-4 inline-block leading-[0] ${currentTheme.glow} filter drop-shadow-2xl`}
+                      className={`text-4xl sm:text-6xl md:text-8xl mb-4 inline-block leading-[0] ${currentTheme.glow} filter drop-shadow-2xl`}
                       style={{ 
                         background: 'transparent',
                         padding: 0,
@@ -339,38 +340,38 @@ const GatheringPage = () => {
                     >
                       {currentTheme.egg}
                     </div>
-                    <p className="text-gray-400 mb-2 mt-4">Click the {currentTheme.name} essence when it shakes!</p>
-                    <p className="text-xs text-gray-500 mb-6">Don't click at the wrong time or you'll disturb the dragon!</p>
-                    <button onClick={startGame} className="arcade-button">
+                    <p className="text-gray-400 mb-2 mt-4 text-sm sm:text-base">Click the {currentTheme.name} essence when it shakes!</p>
+                    <p className="text-xs text-gray-500 mb-4 sm:mb-6 px-2">Don't click at the wrong time or you'll disturb the dragon!</p>
+                    <button onClick={startGame} className="arcade-button text-sm sm:text-base px-4 py-2">
                       START GATHERING
                     </button>
                   </div>
                 ) : gameEnded && gameResult ? (
-                  <div className="text-center">
-                    <div className={`text-6xl mb-4 ${gameResult.success ? 'text-neon-green' : 'text-red-500'}`}>
+                  <div className="text-center p-4">
+                    <div className={`text-4xl sm:text-5xl md:text-6xl mb-2 sm:mb-4 ${gameResult.success ? 'text-neon-green' : 'text-red-500'}`}>
                       {gameResult.success ? '✓' : '✗'}
                     </div>
-                    <h3 className={`font-arcade text-2xl mb-4 ${gameResult.success ? 'text-neon-green' : 'text-red-500'}`}>
+                    <h3 className={`font-arcade text-lg sm:text-xl md:text-2xl mb-2 sm:mb-4 ${gameResult.success ? 'text-neon-green' : 'text-red-500'}`}>
                       {gameResult.success ? 'SUCCESS!' : 'FAILED'}
                     </h3>
                     {gameResult.success ? (
-                      <div className="space-y-2 mb-6">
-                        <p className="text-gray-400">Resources Gained:</p>
-                        <p className="font-arcade text-3xl text-neon-yellow">
+                      <div className="space-y-1 sm:space-y-2 mb-4 sm:mb-6">
+                        <p className="text-gray-400 text-sm sm:text-base">Resources Gained:</p>
+                        <p className="font-arcade text-xl sm:text-2xl md:text-3xl text-neon-yellow">
                           {gameResult.resourcesGained || 0}
                         </p>
                       </div>
                     ) : (
-                      <div className="space-y-2 mb-6">
-                        <p className="text-gray-400">
+                      <div className="space-y-1 sm:space-y-2 mb-4 sm:mb-6">
+                        <p className="text-gray-400 text-sm sm:text-base">
                           Successful Clicks: {successCount} | Misses: {missCount}
                         </p>
-                        <p className="text-sm text-red-400">
+                        <p className="text-xs sm:text-sm text-red-400 px-2">
                           {gameResult.message || 'Not enough successful clicks'}
                         </p>
                       </div>
                     )}
-                    <button onClick={resetGame} className="arcade-button">
+                    <button onClick={resetGame} className="arcade-button text-sm sm:text-base px-4 py-2">
                       TRY AGAIN
                     </button>
                   </div>
@@ -379,7 +380,7 @@ const GatheringPage = () => {
                     {/* Dragon Egg */}
                     <div
                       onClick={handleEggClick}
-                      className={`cursor-pointer select-none text-[10rem] leading-[0] inline-block ${
+                      className={`cursor-pointer select-none text-[6rem] sm:text-[8rem] md:text-[10rem] leading-[0] inline-block ${
                         shaking ? 'animate-shake' : ''
                       } ${
                         clickable ? `${currentTheme.glow} scale-110 filter drop-shadow-2xl` : 'opacity-50 scale-100'
@@ -397,7 +398,7 @@ const GatheringPage = () => {
 
                     {/* Feedback */}
                     {feedback && (
-                      <div className={`absolute top-1/3 left-1/2 transform -translate-x-1/2 font-arcade text-4xl animate-bounce ${
+                      <div className={`absolute top-1/3 left-1/2 transform -translate-x-1/2 font-arcade text-2xl sm:text-3xl md:text-4xl animate-bounce ${
                         feedback === 'success' ? 'text-neon-green' : 'text-red-500'
                       }`}>
                         {feedback === 'success' ? '+1' : 'MISS'}
@@ -405,10 +406,10 @@ const GatheringPage = () => {
                     )}
 
                     {/* Score */}
-                    <div className="absolute bottom-4 left-4 font-arcade text-sm">
+                    <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4 font-arcade text-xs sm:text-sm">
                       <div className="text-neon-green">Success: {successCount}</div>
                       <div className="text-red-500">Misses: {missCount}/3</div>
-                      <div className="text-gray-400 mt-2">
+                      <div className="text-gray-400 mt-1 sm:mt-2">
                         Round: {currentRound.current + 1}/{config?.totalButtons || 0}
                       </div>
                     </div>
@@ -420,16 +421,16 @@ const GatheringPage = () => {
 
           {/* Instructions */}
           <div className="arcade-panel">
-            <h3 className={`font-arcade text-sm mb-4 text-center bg-gradient-to-r ${currentTheme.color} bg-clip-text text-transparent`}>
+            <h3 className={`font-arcade text-xs sm:text-sm mb-3 sm:mb-4 text-center bg-gradient-to-r ${currentTheme.color} bg-clip-text text-transparent`}>
               HOW TO GATHER {currentTheme.name.toUpperCase()} ESSENCE
             </h3>
-            <div className="text-sm text-gray-400 space-y-2">
+            <div className="text-xs sm:text-sm text-gray-400 space-y-1 sm:space-y-2 px-2">
               <p>• Watch the {currentTheme.name} essence carefully</p>
               <p>• Click ONLY when it shakes and glows bright</p>
               <p>• Clicking at wrong time = MISS (disturbs the dragon!)</p>
               <p>• Not clicking when shaking = MISS (opportunity lost!)</p>
               <p>• Get {config ? Math.ceil(config.totalButtons * config.successThreshold) : 3} successes before 3 misses to win!</p>
-              <p className={`text-xs mt-3 pt-3 border-t ${currentTheme.borderColor} border-opacity-30`}>
+              <p className={`text-xs mt-2 sm:mt-3 pt-2 sm:pt-3 border-t ${currentTheme.borderColor} border-opacity-30`}>
                 Each dragon type requires different timing. Higher tiers = faster reactions needed!
               </p>
             </div>

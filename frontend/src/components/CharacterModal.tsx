@@ -9,8 +9,18 @@ interface CharacterModalProps {
 
 const CharacterModal = ({ isOpen, onClose, onCharacterCreated }: CharacterModalProps) => {
   const [characterName, setCharacterName] = useState('');
+  const [selectedAvatar, setSelectedAvatar] = useState('earth');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  const avatars = [
+    { id: 'earth', name: 'Earth Mage', image: '/mages/earth_mage.png' },
+    { id: 'fire', name: 'Fire Mage', image: '/mages/fire_mage.png' },
+    { id: 'water', name: 'Water Mage', image: '/mages/water_mage.png' },
+    { id: 'lightning', name: 'Lightning Mage', image: '/mages/lightning_mage.png' },
+    { id: 'ice', name: 'Ice Mage', image: '/mages/ice_mage.png' },
+    { id: 'shadow', name: 'shadow Mage', image: '/mages/shadow_mage.png' }
+  ];
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -18,12 +28,16 @@ const CharacterModal = ({ isOpen, onClose, onCharacterCreated }: CharacterModalP
     setLoading(true);
 
     try {
-      const response = await api.post('/characters', { name: characterName });
+      const response = await api.post('/characters', { 
+        name: characterName,
+        avatar: selectedAvatar 
+      });
 
       if (response.data.success) {
         onCharacterCreated();
         onClose();
         setCharacterName('');
+        setSelectedAvatar('earth');
       }
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to create character');
@@ -77,6 +91,35 @@ const CharacterModal = ({ isOpen, onClose, onCharacterCreated }: CharacterModalP
             <p className="text-xs text-gray-500 mt-1">
               3-20 characters, letters, numbers, and underscores only
             </p>
+          </div>
+
+          <div>
+            <label className="block text-sm font-arcade mb-3 text-neon-purple">
+              CHOOSE AVATAR
+            </label>
+            <div className="grid grid-cols-3 gap-3">
+              {avatars.map((avatar) => (
+                <button
+                  key={avatar.id}
+                  type="button"
+                  onClick={() => setSelectedAvatar(avatar.id)}
+                  className={`p-3 rounded-lg border-2 transition-all ${
+                    selectedAvatar === avatar.id
+                      ? 'border-neon-blue bg-neon-blue/20'
+                      : 'border-dark-border hover:border-neon-purple'
+                  }`}
+                >
+                  <img 
+                    src={avatar.image} 
+                    alt={avatar.name}
+                    className="w-12 h-12 mx-auto object-contain mb-2"
+                  />
+                  <div className="text-xs text-center text-gray-400">
+                    {avatar.name}
+                  </div>
+                </button>
+              ))}
+            </div>
           </div>
 
           {error && (

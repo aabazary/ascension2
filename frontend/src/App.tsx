@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import GatheringPage from './pages/GatheringPage';
+import BattlePage from './pages/BattlePage';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -27,6 +28,10 @@ function App() {
         <Route 
           path="/gathering" 
           element={isAuthenticated ? <GatheringPage /> : <Navigate to="/" />} 
+        />
+        <Route 
+          path="/battle" 
+          element={isAuthenticated ? <BattlePage /> : <Navigate to="/" />} 
         />
       </Routes>
     </Router>

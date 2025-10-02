@@ -35,7 +35,7 @@ const getCharacter = asyncHandler(async (req, res) => {
 
 // Create new character
 const createCharacter = asyncHandler(async (req, res) => {
-  const { name } = req.body;
+  const { name, avatar } = req.body;
 
   // Validation
   if (!name || name.trim().length === 0) {
@@ -56,6 +56,15 @@ const createCharacter = asyncHandler(async (req, res) => {
     return res.status(400).json({
       success: false,
       message: 'Character name must be 20 characters or less'
+    });
+  }
+
+  // Validate avatar
+  const validAvatars = ['earth', 'fire', 'water', 'lightning', 'ice', 'shadow'];
+  if (!avatar || !validAvatars.includes(avatar)) {
+    return res.status(400).json({
+      success: false,
+      message: 'Valid avatar is required'
     });
   }
 
@@ -83,7 +92,8 @@ const createCharacter = asyncHandler(async (req, res) => {
 
   const character = new Character({
     userId: req.user.userId,
-    name: name.trim()
+    name: name.trim(),
+    avatar: avatar
   });
 
   await character.save();

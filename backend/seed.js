@@ -83,6 +83,7 @@ const seedDatabase = async () => {
     const char1 = await Character.create({
       userId: user1._id,
       name: 'DragonMaster',
+      avatar: 'fire',
       currentTier: 5,
       equipment: createEquipment(5),
       resources: createResources(5),
@@ -99,6 +100,7 @@ const seedDatabase = async () => {
     const char2 = await Character.create({
       userId: user1._id,
       name: 'ShadowLord',
+      avatar: 'shadow',
       currentTier: 4,
       equipment: createEquipment(4),
       resources: createResources(4),
@@ -115,6 +117,7 @@ const seedDatabase = async () => {
     const char3 = await Character.create({
       userId: user1._id,
       name: 'FireKnight',
+      avatar: 'fire',
       currentTier: 3,
       equipment: createEquipment(3),
       resources: createResources(3),
@@ -135,6 +138,7 @@ const seedDatabase = async () => {
     const char4 = await Character.create({
       userId: user2._id,
       name: 'IceMage',
+      avatar: 'ice',
       currentTier: 2,
       equipment: createEquipment(2),
       resources: createResources(2),
@@ -151,6 +155,7 @@ const seedDatabase = async () => {
     const char5 = await Character.create({
       userId: user2._id,
       name: 'StormCaller',
+      avatar: 'lightning',
       currentTier: 1,
       equipment: createEquipment(1),
       resources: createResources(1),
@@ -167,6 +172,7 @@ const seedDatabase = async () => {
     const char6 = await Character.create({
       userId: user2._id,
       name: 'EarthWarden',
+      avatar: 'earth',
       currentTier: 2,
       equipment: createEquipment(2),
       resources: createResources(2),
@@ -187,6 +193,7 @@ const seedDatabase = async () => {
     const char7 = await Character.create({
       userId: user3._id,
       name: 'Apprentice',
+      avatar: 'water',
       currentTier: 0,
       equipment: createEquipment(0),
       resources: createResources(0),
@@ -203,6 +210,7 @@ const seedDatabase = async () => {
     const char8 = await Character.create({
       userId: user3._id,
       name: 'Novice',
+      avatar: 'earth',
       currentTier: 0,
       equipment: createEquipment(0),
       resources: createResources(0),
@@ -230,6 +238,7 @@ const seedDatabase = async () => {
     const char9 = await Character.create({
       userId: user4._id,
       name: 'VeteranSlayer',
+      avatar: 'shadow',
       currentTier: 5,
       equipment: createEquipment(5),
       resources: createResources(5),
@@ -246,6 +255,7 @@ const seedDatabase = async () => {
     const char10 = await Character.create({
       userId: user4._id,
       name: 'CasualAlt',
+      avatar: 'lightning',
       currentTier: 1,
       equipment: createEquipment(1),
       resources: createResources(1),

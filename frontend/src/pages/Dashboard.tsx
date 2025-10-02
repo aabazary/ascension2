@@ -81,8 +81,18 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
     }
   };
 
-  const handleCharacterCreated = () => {
-    fetchCharacters();
+  const handleCharacterCreated = async () => {
+    await fetchCharacters();
+    // Auto-select the newly created character (last one in the list)
+    try {
+      const response = await api.get('/characters');
+      if (response.data.success && response.data.characters.length > 0) {
+        const newCharacter = response.data.characters[response.data.characters.length - 1];
+        setSelectedCharacter(newCharacter);
+      }
+    } catch (error) {
+      console.error('Failed to select new character:', error);
+    }
   };
 
   const getTotalResources = (character: Character) => {
@@ -200,32 +210,32 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
                 <h3 className="font-arcade text-lg text-neon-green mb-6 text-center">
                   CURRENT TIER RESOURCES
                 </h3>
-                <div className="grid grid-cols-3 gap-4">
+                <div className="grid grid-cols-3 gap-2 sm:gap-4">
                   {/* Gathering Resources */}
-                  <div className="text-center p-4 bg-dark-bg rounded-lg border border-dark-border">
-                    <div className="text-3xl mb-2">✨</div>
-                    <div className="font-arcade text-sm text-neon-green mb-2">GATHERING</div>
-                    <div className="text-2xl font-bold text-white">
+                  <div className="text-center p-2 sm:p-4 bg-dark-bg rounded-lg border border-dark-border">
+                    <div className="text-2xl sm:text-3xl mb-2">✨</div>
+                    <div className="font-arcade text-xs sm:text-sm text-neon-green mb-2 break-words">GATHERING</div>
+                    <div className="text-lg sm:text-2xl font-bold text-white">
                       {selectedCharacter.resources?.gathering?.[selectedCharacter.currentTier] || 0}
                     </div>
                     <div className="text-xs text-gray-500 mt-1">Tier {selectedCharacter.currentTier}</div>
                   </div>
 
                   {/* Minion Resources */}
-                  <div className="text-center p-4 bg-dark-bg rounded-lg border border-dark-border">
-                    <div className="text-3xl mb-2">⚔️</div>
-                    <div className="font-arcade text-sm text-neon-blue mb-2">MINION</div>
-                    <div className="text-2xl font-bold text-white">
+                  <div className="text-center p-2 sm:p-4 bg-dark-bg rounded-lg border border-dark-border">
+                    <div className="text-2xl sm:text-3xl mb-2">⚔️</div>
+                    <div className="font-arcade text-xs sm:text-sm text-neon-blue mb-2 break-words">MINION</div>
+                    <div className="text-lg sm:text-2xl font-bold text-white">
                       {selectedCharacter.resources?.minion?.[selectedCharacter.currentTier] || 0}
                     </div>
                     <div className="text-xs text-gray-500 mt-1">Tier {selectedCharacter.currentTier}</div>
                   </div>
 
                   {/* Boss Resources */}
-                  <div className="text-center p-4 bg-dark-bg rounded-lg border border-dark-border">
-                    <div className="text-3xl mb-2">🐉</div>
-                    <div className="font-arcade text-sm text-neon-pink mb-2">BOSS</div>
-                    <div className="text-2xl font-bold text-white">
+                  <div className="text-center p-2 sm:p-4 bg-dark-bg rounded-lg border border-dark-border">
+                    <div className="text-2xl sm:text-3xl mb-2">🐉</div>
+                    <div className="font-arcade text-xs sm:text-sm text-neon-pink mb-2 break-words">BOSS</div>
+                    <div className="text-lg sm:text-2xl font-bold text-white">
                       {selectedCharacter.resources?.boss?.[selectedCharacter.currentTier] || 0}
                     </div>
                     <div className="text-xs text-gray-500 mt-1">Tier {selectedCharacter.currentTier}</div>
@@ -259,7 +269,10 @@ const Dashboard = ({ setIsAuthenticated }: DashboardProps) => {
                 </button>
 
                 {/* Fight Minions */}
-                <button className="group arcade-panel hover:border-neon-blue transition-all duration-300 text-left relative overflow-hidden">
+                <button 
+                  onClick={() => navigate('/battle', { state: { character: selectedCharacter } })}
+                  className="group arcade-panel hover:border-neon-blue transition-all duration-300 text-left relative overflow-hidden"
+                >
                   <div className="absolute inset-0 bg-gradient-to-br from-neon-blue/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
                   <div className="relative">
                     <div className="text-6xl mb-4 transform group-hover:scale-110 transition-transform">
