@@ -23,7 +23,7 @@ const BattleField = ({
             className="w-24 h-24 xs:w-28 xs:h-28 sm:w-48 sm:h-48 md:w-64 md:h-64 lg:w-80 lg:h-80 object-contain"
           />
           <div>
-            <h3 className="font-arcade text-sm sm:text-base text-neon-green break-words truncate max-w-20 xs:break-words xs:max-w-none">
+            <h3 className="font-arcade text-sm sm:text-base text-neon-green break-words">
               {character.name}
             </h3>
             <div className="w-12 xs:w-16 sm:w-20 md:w-24 bg-gray-700 rounded-full h-1.5 sm:h-2">
@@ -49,7 +49,7 @@ const BattleField = ({
         
         <div className="flex items-center gap-2 sm:gap-4">
           <div className="text-right">
-            <h3 className="font-arcade text-sm sm:text-base text-red-400 break-words truncate max-w-20 xs:break-words xs:max-w-none">
+            <h3 className="font-arcade text-sm sm:text-base text-red-400 break-words">
               {tierConfig.minionName}
             </h3>
             <div className="w-12 xs:w-16 sm:w-20 md:w-24 bg-gray-700 rounded-full h-1.5 sm:h-2">

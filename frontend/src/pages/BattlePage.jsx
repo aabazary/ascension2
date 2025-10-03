@@ -523,7 +523,7 @@ const BattlePage = () => {
                           </div>
                         )}
                       </div>
-                      <div className="font-arcade text-xs sm:text-sm text-neon-blue mb-2 truncate max-w-20 xs:break-words xs:max-w-none">{character.name}</div>
+                      <div className="font-arcade text-xs sm:text-sm text-neon-blue mb-2 break-words">{character.name}</div>
                       <div className="w-12 xs:w-16 sm:w-20 md:w-24 bg-gray-700 rounded-full h-1.5 sm:h-2 mb-1 mx-auto">
                         <div 
                           className="bg-neon-green h-1.5 sm:h-2 rounded-full transition-all duration-500"
@@ -578,7 +578,7 @@ const BattlePage = () => {
                           </div>
                         )}
                       </div>
-                      <div className="font-arcade text-xs sm:text-sm text-neon-red mb-2 truncate max-w-20 xs:break-words xs:max-w-none">{tierConfig?.minionName || 'Dragonling'}</div>
+                      <div className="font-arcade text-xs sm:text-sm text-neon-red mb-2 break-words">{tierConfig?.minionName || 'Dragonling'}</div>
                       <div className="w-12 xs:w-16 sm:w-20 md:w-24 bg-gray-700 rounded-full h-1.5 sm:h-2 mb-1 mx-auto">
                         <div 
                           className="bg-red-500 h-1.5 sm:h-2 rounded-full transition-all duration-500"
