@@ -1,52 +1,21 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../utils/api';
-import { TIER_THEMES } from '../utils/gatheringThemes';
+import { TIER_THEMES } from '../constants';
 import EnergyWave from '../components/EnergyWave';
-
-interface Character {
-  _id: string;
-  name: string;
-  avatar: string;
-  currentTier: number;
-  stats: {
-    wins: number;
-    losses: number;
-  };
-}
-
-interface BattleConfig {
-  tiers: {
-    [key: number]: {
-      minionHealth: number;
-      minionDamage: number;
-      minionName: string;
-      minionEmoji: string;
-      minionImage: string;
-    };
-  };
-}
-
-interface Spell {
-  name: string;
-  emoji: string;
-  hitChance: number;
-  damage: number;
-  critChance: number;
-  description: string;
-}
+import Header from '../components/shared/Header';
 
 const BattlePage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const character = location.state?.character as Character;
+  const character = location.state?.character;
   
   const [selectedTier, setSelectedTier] = useState(character?.currentTier || 0);
-  const [battleConfig, setBattleConfig] = useState<BattleConfig | null>(null);
+  const [battleConfig, setBattleConfig] = useState(null);
   const [isBattleStarted, setIsBattleStarted] = useState(false);
   const [isPlayerTurn, setIsPlayerTurn] = useState(true);
   const [gameEnded, setGameEnded] = useState(false);
-  const [battleResult, setBattleResult] = useState<any>(null);
+  const [battleResult, setBattleResult] = useState(null);
   
   // Health states
   const [playerHealth, setPlayerHealth] = useState(100);
@@ -59,21 +28,24 @@ const BattlePage = () => {
   const [enemyHit, setEnemyHit] = useState(false);
   const [playerAttack, setPlayerAttack] = useState(false);
   const [enemyAttack, setEnemyAttack] = useState(false);
-  const [damageText, setDamageText] = useState<{text: string, isPlayer: boolean, isCrit: boolean} | null>(null);
+  const [damageText, setDamageText] = useState(null);
   
   // Combat log state
-  const [combatLog, setCombatLog] = useState<{id: number, message: string, timestamp: number, type: 'action' | 'damage' | 'miss' | 'crit' | 'turn'}[]>([]);
+  const [combatLog, setCombatLog] = useState([]);
   const [logId, setLogId] = useState(0);
   
   // Projectile states - now arrays for multiple projectiles
-  const [playerProjectiles, setPlayerProjectiles] = useState<{id: number, active: boolean, element: string, position: number}[]>([]);
-  const [enemyProjectiles, setEnemyProjectiles] = useState<{id: number, active: boolean, element: string, position: number}[]>([]);
+  const [playerProjectiles, setPlayerProjectiles] = useState([]);
+  const [enemyProjectiles, setEnemyProjectiles] = useState([]);
   
   // Spells
-  const [spells, setSpells] = useState<Spell[]>([]);
+  const [spells, setSpells] = useState([]);
+  
+  // User data for header
+  const [userData, setUserData] = useState(null);
 
   // Helper function to add combat log entries
-  const addCombatLog = (message: string, type: 'action' | 'damage' | 'miss' | 'crit' | 'turn') => {
+  const addCombatLog = (message, type) => {
     const newEntry = {
       id: logId,
       message,
@@ -83,8 +55,6 @@ const BattlePage = () => {
     setCombatLog(prev => [...prev, newEntry]);
     setLogId(prev => prev + 1);
   };
-  
-
 
   useEffect(() => {
     if (!character) {
@@ -92,7 +62,34 @@ const BattlePage = () => {
       return;
     }
     fetchBattleConfig();
+    fetchUserData();
   }, [character, navigate]);
+
+  const fetchUserData = async () => {
+    try {
+      const response = await api.get('/auth/me');
+      if (response.data.success) {
+        setUserData(response.data.user);
+      }
+    } catch (error) {
+      console.error('Failed to fetch user data:', error);
+      navigate('/');
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await api.post('/auth/logout');
+      navigate('/');
+    } catch (error) {
+      console.error('Logout failed:', error);
+      navigate('/');
+    }
+  };
+
+  const handleProfileUpdated = (updatedUserData) => {
+    setUserData(updatedUserData);
+  };
 
   const fetchBattleConfig = async () => {
     try {
@@ -156,7 +153,7 @@ const BattlePage = () => {
     }
   };
 
-  const castSpell = async (spell: Spell) => {
+  const castSpell = async (spell) => {
     if (!isPlayerTurn || gameEnded) return;
     
     setPlayerAttack(true);
@@ -182,7 +179,7 @@ const BattlePage = () => {
         newProjectiles.push({
           id: i,
           active: true,
-          element: character.avatar,
+          element: character.avatar?.replace('_mage', '') || 'fire',
           position: -10 + (i * 2) // Start off-screen left, stagger starting positions
         });
       }
@@ -268,7 +265,7 @@ const BattlePage = () => {
     }
     
     // Get enemy element based on tier
-    const getEnemyElement = (tier: number) => {
+    const getEnemyElement = (tier) => {
       const elementMap = {
         0: 'earth',
         1: 'fire', 
@@ -277,7 +274,7 @@ const BattlePage = () => {
         4: 'ice',
         5: 'shadow'
       };
-      return elementMap[tier as keyof typeof elementMap] || 'fire';
+      return elementMap[tier] || 'fire';
     };
     
     // Create multiple enemy projectiles
@@ -356,7 +353,7 @@ const BattlePage = () => {
     }, 3000);
   };
 
-  const endBattle = async (playerWon: boolean) => {
+  const endBattle = async (playerWon) => {
     setGameEnded(true);
     setIsPlayerTurn(false);
     
@@ -401,26 +398,14 @@ const BattlePage = () => {
   const tierConfig = battleConfig?.tiers[selectedTier];
 
   return (
-    <div className="min-h-screen">
-      {/* Header */}
-      <header className="p-3 sm:p-6 flex justify-between items-center border-b-2 border-dark-border">
-        <button 
-          onClick={() => navigate('/')}
-          className="flex items-center gap-2 sm:gap-4 hover:opacity-80 transition-opacity"
-        >
-          <div className="w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-br from-neon-purple to-neon-pink rounded-lg flex items-center justify-center shadow-neon">
-            <span className="text-lg sm:text-2xl">🔮</span>
-          </div>
-          <h1 className="font-arcade text-lg sm:text-xl neon-text">ASCENSION</h1>
-        </button>
-        <button
-          onClick={() => navigate('/dashboard')}
-          className="arcade-button text-xs sm:text-sm px-3 py-2 sm:px-4 sm:py-3"
-        >
-          <span className="hidden sm:inline">DASHBOARD</span>
-          <span className="sm:hidden">DASH</span>
-        </button>
-      </header>
+    <div className="min-h-screen bg-dark-bg">
+      <Header 
+        showDashboard={true}
+        showLogout={true}
+        onLogout={handleLogout}
+        userData={userData}
+        onProfileUpdated={handleProfileUpdated}
+      />
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-12">
@@ -528,8 +513,8 @@ const BattlePage = () => {
                     } ${playerAttack ? 'scale-110' : ''}`}>
                       <div className="mb-2 relative">
                         <img 
-                          src={`/mages/${character.avatar}_mage.png`} 
-                          alt={`${character.avatar} mage`}
+                          src={`/mages/${character.avatar?.replace('_mage', '') || 'earth'}_mage.png`} 
+                          alt={`${character.avatar?.replace('_mage', '') || 'earth'} mage`}
                           className="w-24 h-24 xs:w-28 xs:h-28 sm:w-48 sm:h-48 md:w-64 md:h-64 lg:w-80 lg:h-80 mx-auto object-contain"
                         />
                         {damageText && damageText.isPlayer && (

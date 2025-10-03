@@ -261,10 +261,113 @@ const getCurrentUser = asyncHandler(async (req, res) => {
   });
 });
 
+// Google OAuth callback
+const googleCallback = asyncHandler(async (req, res) => {
+  const { user } = req;
+  
+  if (!user) {
+    return res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}?error=oauth_failed`);
+  }
+
+  // Generate tokens
+  const accessToken = jwt.sign(
+    { userId: user._id, email: user.email },
+    process.env.JWT_SECRET,
+    { expiresIn: '15m' }
+  );
+
+  const refreshToken = jwt.sign(
+    { userId: user._id, type: 'refresh' },
+    process.env.JWT_REFRESH_SECRET,
+    { expiresIn: '7d' }
+  );
+
+  // Store refresh token
+  user.refreshTokens.push({
+    token: refreshToken,
+    expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+  });
+  user.lastLogin = new Date();
+  await user.save();
+
+  // Set cookies
+  res.cookie('accessToken', accessToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 15 * 60 * 1000
+  });
+
+  res.cookie('refreshToken', refreshToken, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 7 * 24 * 60 * 60 * 1000
+  });
+
+  // Redirect to frontend with success
+  res.redirect(`${process.env.FRONTEND_URL || 'http://localhost:5173'}?auth=success`);
+});
+
+// Update user profile
+const updateProfile = asyncHandler(async (req, res) => {
+  const { username, profilePicture } = req.body;
+  const userId = req.user.userId;
+
+  // Validation
+  if (username && (username.length < 3 || username.length > 20)) {
+    return res.status(400).json({
+      success: false,
+      message: 'Username must be between 3 and 20 characters'
+    });
+  }
+
+  // Check if username is already taken (if changing username)
+  if (username) {
+    const existingUser = await User.findOne({ 
+      username: username, 
+      _id: { $ne: userId } 
+    });
+    
+    if (existingUser) {
+      return res.status(400).json({
+        success: false,
+        message: 'Username is already taken'
+      });
+    }
+  }
+
+  // Update user
+  const updateData = {};
+  if (username) updateData.username = username;
+  if (profilePicture !== undefined) updateData.profilePicture = profilePicture;
+
+  const user = await User.findByIdAndUpdate(
+    userId,
+    updateData,
+    { new: true, select: '-password -refreshTokens' }
+  );
+
+  if (!user) {
+    return res.status(404).json({
+      success: false,
+      message: 'User not found'
+    });
+  }
+
+  res.json({
+    success: true,
+    message: 'Profile updated successfully',
+    user
+  });
+});
+
 export default {
   register,
   login,
   refresh,
   logout,
-  getCurrentUser
+  getCurrentUser,
+  googleCallback,
+  updateProfile
 };

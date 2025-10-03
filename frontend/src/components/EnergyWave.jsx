@@ -1,19 +1,11 @@
 import { useState, useEffect } from 'react';
 
-interface EnergyWaveProps {
-  element: string;
-  position: number;
-  direction: 'left' | 'right';
-  isActive: boolean;
-  projectileId?: number;
-}
-
-const EnergyWave = ({ element, position, direction, isActive, projectileId = 0 }: EnergyWaveProps) => {
+const EnergyWave = ({ element, position, direction, isActive, projectileId = 0 }) => {
   const [scale, setScale] = useState(0.2);
   const [opacity, setOpacity] = useState(0.4);
   
   // Get the impact image for the element
-  const getSpellImage = (element: string) => {
+  const getSpellImage = (element) => {
     const elementImages = {
       fire: '/spells/fire/fire_impact.png',
       water: '/spells/water/water_impact.png',
@@ -23,11 +15,11 @@ const EnergyWave = ({ element, position, direction, isActive, projectileId = 0 }
       shadow: '/spells/shadow/shadow_impact.png'
     };
     
-    return elementImages[element as keyof typeof elementImages] || elementImages.fire;
+    return elementImages[element] || elementImages.fire;
   };
 
   // Get element-specific colors
-  const getElementColors = (element: string) => {
+  const getElementColors = (element) => {
     const colorMap = {
       fire: { glow: '#ff6b35', shadow: '#ff0000', particle: '#ff8c42' },
       water: { glow: '#42a5f5', shadow: '#1976d2', particle: '#64b5f6' },
@@ -37,7 +29,7 @@ const EnergyWave = ({ element, position, direction, isActive, projectileId = 0 }
       shadow: { glow: '#ba68c8', shadow: '#8e24aa', particle: '#ce93d8' }
     };
     
-    return colorMap[element as keyof typeof colorMap] || colorMap.fire;
+    return colorMap[element] || colorMap.fire;
   };
 
   // Simple scaling animation

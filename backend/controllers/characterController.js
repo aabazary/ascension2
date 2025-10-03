@@ -113,7 +113,7 @@ const createCharacter = asyncHandler(async (req, res) => {
 
 // Update character
 const updateCharacter = asyncHandler(async (req, res) => {
-  const { name } = req.body;
+  const { name, avatar } = req.body;
 
   const character = await Character.findOne({
     _id: req.params.id,
@@ -158,6 +158,11 @@ const updateCharacter = asyncHandler(async (req, res) => {
     }
 
     character.name = name.trim();
+  }
+
+  // Update avatar if provided
+  if (avatar) {
+    character.avatar = avatar;
   }
 
   await character.save();

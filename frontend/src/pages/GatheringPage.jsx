@@ -1,34 +1,30 @@
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import api from '../utils/api';
-import { TIER_THEMES } from '../utils/gatheringThemes';
-
-interface Character {
-  _id: string;
-  name: string;
-  currentTier: number;
-}
+import { TIER_THEMES } from '../constants';
+import Header from '../components/shared/Header';
 
 const GatheringPage = () => {
   const navigate = useNavigate();
   const location = useLocation();
-  const character = location.state?.character as Character;
+  const character = location.state?.character;
   
+  const [userData, setUserData] = useState(null);
   const [selectedTier, setSelectedTier] = useState(character?.currentTier || 0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [shaking, setShaking] = useState(false);
   const [clickable, setClickable] = useState(false);
   const [successCount, setSuccessCount] = useState(0);
   const [missCount, setMissCount] = useState(0);
-  const [feedback, setFeedback] = useState<'success' | 'miss' | null>(null);
+  const [feedback, setFeedback] = useState(null);
   const [gameEnded, setGameEnded] = useState(false);
-  const [gameResult, setGameResult] = useState<any>(null);
-  const [gatheringConfig, setGatheringConfig] = useState<any>(null);
+  const [gameResult, setGameResult] = useState(null);
+  const [gatheringConfig, setGatheringConfig] = useState(null);
   
-  const buttonClicks = useRef<Array<{ clicked: boolean; clickTime?: number }>>([]);
+  const buttonClicks = useRef([]);
   const startTime = useRef(0);
   const currentRound = useRef(0);
-  const windowTimeout = useRef<any>(null);
+  const windowTimeout = useRef(null);
   const currentButtonClicked = useRef(false);
   const successCountRef = useRef(0);
   const missCountRef = useRef(0);
@@ -39,7 +35,34 @@ const GatheringPage = () => {
       return;
     }
     fetchGatheringConfig();
+    fetchUserData();
   }, [character, navigate]);
+
+  const fetchUserData = async () => {
+    try {
+      const response = await api.get('/auth/me');
+      if (response.data.success) {
+        setUserData(response.data.user);
+      }
+    } catch (error) {
+      console.error('Failed to fetch user data:', error);
+      navigate('/');
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await api.post('/auth/logout');
+      navigate('/');
+    } catch (error) {
+      console.error('Logout failed:', error);
+      navigate('/');
+    }
+  };
+
+  const handleProfileUpdated = (updatedUserData) => {
+    setUserData(updatedUserData);
+  };
 
   const fetchGatheringConfig = async () => {
     try {
@@ -225,7 +248,7 @@ const GatheringPage = () => {
       });
 
       setGameResult(response.data);
-    } catch (error: any) {
+    } catch (error) {
       console.error('Failed to complete gathering:', error);
       setGameResult({
         success: false,
@@ -253,26 +276,14 @@ const GatheringPage = () => {
   const currentTheme = TIER_THEMES[selectedTier];
 
   return (
-    <div className="min-h-screen">
-      {/* Header */}
-      <header className="p-3 sm:p-6 flex justify-between items-center border-b-2 border-dark-border">
-        <button 
-          onClick={() => navigate('/')}
-          className="flex items-center gap-2 sm:gap-4 hover:opacity-80 transition-opacity"
-        >
-          <div className="w-8 h-8 sm:w-12 sm:h-12 bg-gradient-to-br from-neon-purple to-neon-pink rounded-lg flex items-center justify-center shadow-neon">
-            <span className="text-lg sm:text-2xl">🔮</span>
-          </div>
-          <h1 className="font-arcade text-lg sm:text-xl neon-text">ASCENSION</h1>
-        </button>
-        <button
-          onClick={() => navigate('/dashboard')}
-          className="arcade-button text-xs sm:text-sm px-3 py-2 sm:px-4 sm:py-3"
-        >
-          <span className="hidden sm:inline">DASHBOARD</span>
-          <span className="sm:hidden">DASH</span>
-        </button>
-      </header>
+    <div className="min-h-screen bg-dark-bg">
+      <Header 
+        showDashboard={true}
+        showLogout={true}
+        onLogout={handleLogout}
+        userData={userData}
+        onProfileUpdated={handleProfileUpdated}
+      />
 
       {/* Main Content */}
       <main className="container mx-auto px-4 py-12">
