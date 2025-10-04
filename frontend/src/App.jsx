@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard';
 import GatheringPage from './pages/GatheringPage';
 import BattlePage from './pages/BattlePage';
 import BossBattlePage from './pages/BossBattlePage';
+import UpgradeStore from './pages/UpgradeStore';
 import ResetPassword from './pages/ResetPassword';
 import { clearAllCaches } from './utils/cacheUtils';
 
@@ -78,6 +79,10 @@ function App() {
         <Route 
           path="/boss-battle" 
           element={isAuthenticated ? <BossBattlePage /> : <Navigate to="/" />} 
+        />
+        <Route 
+          path="/upgrade-store" 
+          element={isAuthenticated ? <UpgradeStore userData={userData} onProfileUpdated={setUserData} /> : <Navigate to="/" />} 
         />
         <Route 
           path="/reset-password" 

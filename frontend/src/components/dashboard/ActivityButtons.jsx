@@ -11,7 +11,7 @@ const ActivityButtons = ({ character }) => {
       <h3 className="font-arcade text-lg text-neon-green mb-6 text-center">
         ACTIVITIES
       </h3>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {/* Gathering Button */}
         <button
           onClick={() => navigate('/gathering', { state: { character } })}
@@ -54,6 +54,21 @@ const ActivityButtons = ({ character }) => {
           </p>
           <div className="text-xs text-gray-500">
             Epic battles against legendary dragons
+          </div>
+        </button>
+
+        {/* Upgrade Store Button */}
+        <button
+          onClick={() => navigate('/upgrade-store', { state: { character } })}
+          className="arcade-panel p-8 text-center hover:scale-105 transition-transform group"
+        >
+          <div className="text-6xl mb-4 group-hover:animate-bounce">⚡</div>
+          <h3 className="font-arcade text-2xl text-yellow-400 mb-4">UPGRADE STORE</h3>
+          <p className="text-gray-400 text-sm mb-4">
+            Enhance your equipment to increase your power and abilities!
+          </p>
+          <div className="text-xs text-gray-500">
+            Upgrade rings, cloaks, and belts with resources
           </div>
         </button>
       </div>

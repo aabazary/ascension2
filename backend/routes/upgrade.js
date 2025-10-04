@@ -4,8 +4,8 @@ import upgradeController from '../controllers/upgradeController.js';
 
 const router = express.Router();
 
-router.get('/info/:characterId/:equipmentType', auth, upgradeController.getEquipmentUpgradeInfo);
-router.post('/perform', auth, upgradeController.upgradeEquipment);
-router.get('/status/:characterId', auth, upgradeController.getCharacterUpgradeStatus);
+router.get('/character/:characterId/equipment/:equipmentType', auth, upgradeController.getEquipmentUpgradeInfo);
+router.post('/equipment', auth, upgradeController.upgradeEquipment);
+router.get('/character/:characterId/status', auth, upgradeController.getCharacterUpgradeStatus);
 
 export default router;

@@ -1,0 +1,132 @@
+import { useState, useEffect } from 'react';
+import api from '../utils/api';
+import { updateCharacterCache } from '../utils/cacheUtils';
+
+export const useUpgrade = (character) => {
+  const [upgradeStatus, setUpgradeStatus] = useState(null);
+  const [selectedGear, setSelectedGear] = useState(null);
+  const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const refreshUpgradeStatus = async () => {
+    if (!character?._id) return;
+
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await api.get(`/upgrade/character/${character._id}/status`);
+      
+      if (response.data.success) {
+        setUpgradeStatus(response.data.upgradeStatus);
+        
+        // Update character cache with fresh data
+        const updatedCharacter = response.data.character;
+        updateCharacterCache(updatedCharacter);
+      }
+    } catch (err) {
+      console.error('Failed to fetch upgrade status:', err);
+      setError(err.response?.data?.message || 'Failed to load upgrade information');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getGearUpgradeInfo = async (equipmentType) => {
+    if (!character?._id) return null;
+
+    try {
+      const response = await api.get(`/upgrade/character/${character._id}/equipment/${equipmentType}`);
+      
+      if (response.data.success) {
+        return response.data.upgradeInfo;
+      }
+    } catch (err) {
+      console.error(`Failed to fetch upgrade info for ${equipmentType}:`, err);
+      setError(err.response?.data?.message || `Failed to load ${equipmentType} upgrade information`);
+    }
+    
+    return null;
+  };
+
+  const selectGear = async (equipmentType) => {
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const upgradeInfo = await getGearUpgradeInfo(equipmentType);
+      
+      if (upgradeInfo) {
+        setSelectedGear({
+          type: equipmentType,
+          ...upgradeInfo
+        });
+        setIsUpgradeModalOpen(true);
+      }
+    } catch (err) {
+      console.error('Failed to select gear:', err);
+      setError(err.response?.data?.message || 'Failed to load gear information');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const performUpgrade = async (equipmentType) => {
+    if (!character?._id) return;
+
+    try {
+      setLoading(true);
+      setError(null);
+      
+      const response = await api.post('/upgrade/equipment', {
+        characterId: character._id,
+        equipmentType
+      });
+      
+      if (response.data.success) {
+        const { upgrade, tierUnlock } = response.data;
+        
+        // Refresh upgrade status to get updated data
+        await refreshUpgradeStatus();
+        
+        // Close modal
+        setIsUpgradeModalOpen(false);
+        setSelectedGear(null);
+        
+        // Show success message (you could add a toast notification here)
+        console.log('Upgrade successful:', upgrade.message);
+        
+        if (tierUnlock?.tierUnlocked) {
+          console.log('Tier unlocked:', tierUnlock.message);
+        }
+        
+        return { success: true, upgrade, tierUnlock };
+      }
+    } catch (err) {
+      console.error('Failed to perform upgrade:', err);
+      setError(err.response?.data?.message || 'Failed to upgrade equipment');
+      return { success: false, error: err.response?.data?.message || 'Upgrade failed' };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const closeUpgradeModal = () => {
+    setIsUpgradeModalOpen(false);
+    setSelectedGear(null);
+    setError(null);
+  };
+
+  return {
+    upgradeStatus,
+    selectedGear,
+    isUpgradeModalOpen,
+    loading,
+    error,
+    selectGear,
+    closeUpgradeModal,
+    performUpgrade,
+    refreshUpgradeStatus
+  };
+};
