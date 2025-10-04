@@ -6,12 +6,13 @@ const TierSelection = ({
   character, 
   battleConfig, 
   isBattleStarted, 
-  battleResult 
+  battleResult,
+  isBossBattle = false
 }) => {
   return (
     <div className="arcade-panel mb-8">
       <h3 className="font-arcade text-sm text-neon-green mb-4 text-center">
-        SELECT MINION TIER
+        {isBossBattle ? 'SELECT BOSS TIER' : 'SELECT MINION TIER'}
       </h3>
       <div className="grid grid-cols-3 md:grid-cols-6 gap-3 justify-center">
         {[0, 1, 2, 3, 4, 5].map((tier) => {
@@ -29,12 +30,12 @@ const TierSelection = ({
                   ? 'bg-dark-bg border border-dark-border hover:border-opacity-50'
                   : 'bg-dark-bg border border-dark-border opacity-30 cursor-not-allowed'
               }`}
-              title={tier > character.currentTier ? 'Locked' : `${theme.name} - ${tierConfig?.minionName}`}
+              title={tier > character.currentTier ? 'Locked' : `${theme.name} - ${isBossBattle ? tierConfig?.bossName : tierConfig?.minionName}`}
             >
               <div className="mb-1">
                 <img 
-                  src={tierConfig?.minionImage || '/earth__dragonling.png'} 
-                  alt={tierConfig?.minionName || 'Dragonling'}
+                  src={isBossBattle ? (tierConfig?.bossImage || '/dragons/mountain_wyrm.png') : (tierConfig?.minionImage || '/dragonling/earth__dragonling.png')} 
+                  alt={isBossBattle ? (tierConfig?.bossName || 'Dragon') : (tierConfig?.minionName || 'Dragonling')}
                   className="w-8 h-8 mx-auto object-contain"
                 />
               </div>

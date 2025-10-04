@@ -26,7 +26,8 @@ export const useBattleActions = (
   setEnemyProjectiles,
   setIsPlayerTurn,
   addCombatLog,
-  submitBattleResult
+  submitBattleResult,
+  isBossBattle = false
 ) => {
   // Start battle
   const startBattle = async () => {
@@ -36,7 +37,7 @@ export const useBattleActions = (
     setGameEnded(false);
     setBattleResult(null);
     setPlayerHealth(100);
-    setEnemyHealth(maxEnemyHealth);
+    setEnemyHealth(isBossBattle ? (battleConfig?.tiers[selectedTier]?.bossHealth || 150) : maxEnemyHealth);
     setCombatLog([]);
     setLogId(0);
     
@@ -231,7 +232,7 @@ export const useBattleActions = (
       setTimeout(() => {
         const tierConfig = battleConfig?.tiers[selectedTier];
         if (tierConfig) {
-          const damage = tierConfig.minionDamage;
+          const damage = isBossBattle ? tierConfig.bossDamage : tierConfig.minionDamage;
           setPlayerHealth(prev => {
             const newHealth = Math.max(0, prev - damage);
             return newHealth;
@@ -246,7 +247,7 @@ export const useBattleActions = (
         
         // Check if player is defeated after damage
         if (tierConfig) {
-          const damage = tierConfig.minionDamage;
+          const damage = isBossBattle ? tierConfig.bossDamage : tierConfig.minionDamage;
           if (playerHealth - damage <= 0) {
             setTimeout(() => endBattle(false), 100);
           }
@@ -277,7 +278,7 @@ export const useBattleActions = (
     setPlayerProjectiles([]);
     setEnemyProjectiles([]);
     
-    const result = await submitBattleResult(character, selectedTier, {
+    const result = await submitBattleResult(character._id, selectedTier, {
       won,
       playerHealth,
       enemyHealth
@@ -287,7 +288,7 @@ export const useBattleActions = (
     
     // Update character cache with new resources if won
     if (result.won && result.resourcesGained > 0) {
-      updateCharacterCache(character._id, 'minion', selectedTier, result.resourcesGained);
+      updateCharacterCache(character._id, isBossBattle ? 'boss' : 'minion', selectedTier, result.resourcesGained);
     }
   };
 
@@ -297,7 +298,7 @@ export const useBattleActions = (
     setGameEnded(false);
     setBattleResult(null);
     setPlayerHealth(100);
-    setEnemyHealth(maxEnemyHealth);
+    setEnemyHealth(isBossBattle ? (battleConfig?.tiers[selectedTier]?.bossHealth || 150) : maxEnemyHealth);
     setSpells([]); // Will be re-initialized by startBattle
     setCombatLog([]);
     setLogId(0);

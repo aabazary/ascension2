@@ -4,6 +4,7 @@ import LandingPage from './pages/LandingPage';
 import Dashboard from './pages/Dashboard';
 import GatheringPage from './pages/GatheringPage';
 import BattlePage from './pages/BattlePage';
+import BossBattlePage from './pages/BossBattlePage';
 import ResetPassword from './pages/ResetPassword';
 import { clearAllCaches } from './utils/cacheUtils';
 
@@ -73,6 +74,10 @@ function App() {
         <Route 
           path="/battle" 
           element={isAuthenticated ? <BattlePage /> : <Navigate to="/" />} 
+        />
+        <Route 
+          path="/boss-battle" 
+          element={isAuthenticated ? <BossBattlePage /> : <Navigate to="/" />} 
         />
         <Route 
           path="/reset-password" 

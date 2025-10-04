@@ -99,12 +99,90 @@ const startMinionBattle = asyncHandler(async (req, res) => {
   }
 });
 
-// Start boss battle (placeholder for future)
+// Start boss battle
 const startBossBattle = asyncHandler(async (req, res) => {
-  res.json({
-    success: false,
-    message: 'Boss battles coming soon!'
+  const { characterId, tier, battleResult } = req.body;
+  
+  if (!characterId || tier === undefined || !battleResult) {
+    return res.status(400).json({
+      success: false,
+      message: 'Character ID, tier, and battle result are required'
+    });
+  }
+  
+  if (tier < 0 || tier > 5) {
+    return res.status(400).json({
+      success: false,
+      message: 'Invalid tier (0-5)'
+    });
+  }
+  
+  const character = await Character.findOne({
+    _id: characterId,
+    userId: req.user.userId
   });
+  
+  if (!character) {
+    return res.status(404).json({
+      success: false,
+      message: 'Character not found or does not belong to you'
+    });
+  }
+  
+  if (character.currentTier < tier) {
+    return res.status(400).json({
+      success: false,
+      message: 'Character tier too low for this battle'
+    });
+  }
+  
+  try {
+    // Update character stats
+    if (battleResult.won) {
+      character.stats.wins = (character.stats.wins || 0) + 1;
+      character.stats.totalBattles = (character.stats.totalBattles || 0) + 1;
+      character.stats.totalBosses = (character.stats.totalBosses || 0) + 1;
+      
+      // Add boss resources based on tier (higher rewards than minions)
+      const resourcesGained = Math.floor(Math.random() * 15) + (tier * 3) + 10;
+      await character.addResource('boss', tier, resourcesGained);
+      
+      res.json({
+        success: true,
+        won: true,
+        message: 'Boss defeated!',
+        resourcesGained,
+        character: {
+          stats: character.stats,
+          resources: character.resources
+        }
+      });
+    } else {
+      character.stats.losses = (character.stats.losses || 0) + 1;
+      character.stats.totalBattles = (character.stats.totalBattles || 0) + 1;
+      character.stats.totalBosses = (character.stats.totalBosses || 0) + 1;
+      
+      res.json({
+        success: true,
+        won: false,
+        message: 'Boss battle lost!',
+        resourcesGained: 0,
+        character: {
+          stats: character.stats,
+          resources: character.resources
+        }
+      });
+    }
+    
+    character.lastActivity = new Date();
+    await character.save();
+    
+  } catch (error) {
+    res.status(400).json({
+      success: false,
+      message: error.message
+    });
+  }
 });
 
 // Perform battle turn (placeholder for future)

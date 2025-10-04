@@ -14,7 +14,8 @@ const BattleField = ({
   damageText,
   playerProjectiles,
   enemyProjectiles,
-  tierConfig
+  tierConfig,
+  isBossBattle = false
 }) => {
   return (
     <div className="absolute inset-0 flex items-center justify-between px-2 sm:px-4 md:px-8">
@@ -79,8 +80,8 @@ const BattleField = ({
       } ${enemyAttack ? 'scale-110' : ''}`}>
         <div className="mb-2 relative">
           <img 
-            src={tierConfig?.minionImage || '/dragonling/earth__dragonling.png'} 
-            alt={tierConfig?.minionName || 'Dragonling'}
+            src={isBossBattle ? (tierConfig?.bossImage || '/dragons/mountain_wyrm.png') : (tierConfig?.minionImage || '/dragonling/earth__dragonling.png')} 
+            alt={isBossBattle ? (tierConfig?.bossName || 'Dragon') : (tierConfig?.minionName || 'Dragonling')}
             className="w-24 h-24 xs:w-28 xs:h-28 sm:w-48 sm:h-48 md:w-64 md:h-64 lg:w-80 lg:h-80 mx-auto object-contain"
           />
           {damageText && !damageText.isPlayer && (
@@ -89,7 +90,7 @@ const BattleField = ({
             </div>
           )}
         </div>
-        <div className="font-arcade text-xs sm:text-sm text-neon-red mb-2 break-words">{tierConfig?.minionName || 'Dragonling'}</div>
+        <div className="font-arcade text-xs sm:text-sm text-neon-red mb-2 break-words">{isBossBattle ? (tierConfig?.bossName || 'Dragon') : (tierConfig?.minionName || 'Dragonling')}</div>
         <div className="w-12 xs:w-16 sm:w-20 md:w-24 bg-gray-700 rounded-full h-1.5 sm:h-2 mb-1 mx-auto">
           <div 
             className="bg-red-500 h-1.5 sm:h-2 rounded-full transition-all duration-500"

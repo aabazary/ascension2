@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { TIER_THEMES } from '../constants';
 
-export const useBattleState = () => {
+export const useBattleState = (isBossBattle = false) => {
   const navigate = useNavigate();
   const location = useLocation();
   const character = location.state?.character;
@@ -58,10 +58,11 @@ export const useBattleState = () => {
   useEffect(() => {
     if (battleConfig && battleConfig.tiers[selectedTier]) {
       const tierConfig = battleConfig.tiers[selectedTier];
-      setEnemyHealth(tierConfig.minionHealth);
-      setMaxEnemyHealth(tierConfig.minionHealth);
+      const enemyHealth = isBossBattle ? tierConfig.bossHealth : tierConfig.minionHealth;
+      setEnemyHealth(enemyHealth);
+      setMaxEnemyHealth(enemyHealth);
     }
-  }, [selectedTier, battleConfig]);
+  }, [selectedTier, battleConfig, isBossBattle]);
 
   // Determine current theme and tier config
   const currentTheme = TIER_THEMES[selectedTier];
