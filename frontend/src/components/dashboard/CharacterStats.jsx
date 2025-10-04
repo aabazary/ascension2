@@ -1,3 +1,5 @@
+import React from 'react';
+
 const CharacterStats = ({ character }) => {
   if (!character) return null;
 

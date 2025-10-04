@@ -9,9 +9,8 @@ import ResourceDisplay from '../components/dashboard/ResourceDisplay';
 import CharacterStats from '../components/dashboard/CharacterStats';
 import ResourceSummary from '../components/dashboard/ResourceSummary';
 
-const Dashboard = ({ setIsAuthenticated }) => {
+const Dashboard = ({ setIsAuthenticated, userData, setUserData }) => {
   const {
-    userData,
     characters,
     selectedCharacter,
     isCharacterModalOpen,
@@ -32,7 +31,7 @@ const Dashboard = ({ setIsAuthenticated }) => {
     handleCreateCharacter,
     handleLogout,
     handleProfileUpdated
-  } = useDashboard(setIsAuthenticated);
+  } = useDashboard(setIsAuthenticated, setUserData);
 
   if (loading) {
     return (
@@ -53,6 +52,7 @@ const Dashboard = ({ setIsAuthenticated }) => {
         onLogout={handleLogout}
         userData={userData}
         onProfileUpdated={handleProfileUpdated}
+        selectedCharacter={selectedCharacter}
       />
 
       <main className="container mx-auto px-4 py-12">

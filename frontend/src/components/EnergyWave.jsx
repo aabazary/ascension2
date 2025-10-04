@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 
 const EnergyWave = ({ element, position, direction, isActive, projectileId = 0 }) => {
   const [scale, setScale] = useState(0.2);

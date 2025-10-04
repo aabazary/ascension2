@@ -1,3 +1,5 @@
+import React from 'react';
+
 const SpellButtons = ({ spells, onCastSpell }) => {
   return (
     <div className="arcade-panel mb-8">

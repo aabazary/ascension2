@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../utils/api';
+import { ALL_PROFILE_PICTURES } from '../constants/avatars';
 
 const ProfileModal = ({ isOpen, onClose, userData, onProfileUpdated }) => {
   const [formData, setFormData] = useState({
@@ -10,32 +11,8 @@ const ProfileModal = ({ isOpen, onClose, userData, onProfileUpdated }) => {
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
 
-  // Available profile pictures
-  const profilePictures = [
-    // Mages
-    { id: 'earth_mage', name: 'Earth Mage', image: '/mages/earth_mage.png' },
-    { id: 'fire_mage', name: 'Fire Mage', image: '/mages/fire_mage.png' },
-    { id: 'water_mage', name: 'Water Mage', image: '/mages/water_mage.png' },
-    { id: 'lightning_mage', name: 'Lightning Mage', image: '/mages/lightning_mage.png' },
-    { id: 'ice_mage', name: 'Ice Mage', image: '/mages/ice_mage.png' },
-    { id: 'shadow_mage', name: 'Shadow Mage', image: '/mages/shadow_mage.png' },
-    
-    // Dragonlings
-    { id: 'earth__dragonling', name: 'Earth Dragonling', image: '/dragonling/earth__dragonling.png' },
-    { id: 'infero_dragonling', name: 'Fire Dragonling', image: '/dragonling/infero_dragonling.png' },
-    { id: 'water_dragonling', name: 'Water Dragonling', image: '/dragonling/water_dragonling.png' },
-    { id: 'lightning_dragonling', name: 'Lightning Dragonling', image: '/dragonling/lightning_dragonling.png' },
-    { id: 'ice_dragonling', name: 'Ice Dragonling', image: '/dragonling/ice_dragonling.png' },
-    { id: 'void_dragonling', name: 'Void Dragonling', image: '/dragonling/void_dragonling.png' },
-    
-    // Dragons (Boss creatures)
-    { id: 'mountain_wyrm', name: 'Mountain Wyrm', image: '/dragons/mountain_wyrm.png' },
-    { id: 'inferno_drake', name: 'Inferno Drake', image: '/dragons/inferno_drake.png' },
-    { id: 'tsunami_serpent', name: 'Tsunami Serpent', image: '/dragons/tsunami_serpent.png' },
-    { id: 'thunder_dragon', name: 'Thunder Dragon', image: '/dragons/thunder_dragon.png' },
-    { id: 'frost_wyvern', name: 'Frost Wyvern', image: '/dragons/frost_wyvern.png' },
-    { id: 'void_hydra', name: 'Void Hydra', image: '/dragons/void_hydra.png' }
-  ];
+  // Use shared profile pictures
+  const profilePictures = ALL_PROFILE_PICTURES;
 
   useEffect(() => {
     if (isOpen && userData) {
@@ -157,20 +134,20 @@ const ProfileModal = ({ isOpen, onClose, userData, onProfileUpdated }) => {
             )}
 
             {/* Google Profile Option - Always show for OAuth users */}
-            {userData?.profilePicture?.startsWith('http') && (
+            {userData?.googleId && userData?.originalGoogleProfilePicture && (
               <div className="mb-4">
                 <p className="text-sm text-gray-400 mb-2">Your Google Profile:</p>
                 <button
                   type="button"
-                  onClick={() => handlePictureSelect(userData.profilePicture)}
+                  onClick={() => handlePictureSelect(userData.originalGoogleProfilePicture)}
                   className={`flex items-center gap-3 p-3 rounded-lg border-2 transition-all ${
-                    formData.profilePicture === userData.profilePicture
+                    formData.profilePicture === userData.originalGoogleProfilePicture
                       ? 'border-neon-green bg-neon-green bg-opacity-10'
                       : 'border-dark-border hover:border-gray-500'
                   }`}
                 >
                   <img
-                    src={userData.profilePicture}
+                    src={userData.originalGoogleProfilePicture}
                     alt="Google Profile"
                     className="w-8 h-8 rounded-full object-cover"
                   />

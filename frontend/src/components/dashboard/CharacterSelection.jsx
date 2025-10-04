@@ -1,3 +1,6 @@
+import React from 'react';
+import { getAvatarImage } from '../../constants/avatars';
+
 const CharacterSelection = ({ 
   characters, 
   selectedCharacter, 
@@ -6,39 +9,7 @@ const CharacterSelection = ({
   onEditCharacter, 
   onDeleteCharacter 
 }) => {
-  // Get correct avatar image
-  const getAvatarImage = (avatar) => {
-    if (!avatar) return '/mages/earth_mage.png';
-    
-    // Handle both old format (earth, fire, etc.) and new format (earth_mage, fire_mage, etc.)
-    let avatarKey = avatar;
-    if (!avatar.includes('_')) {
-      avatarKey = `${avatar}_mage`;
-    }
-    
-    const avatarMap = {
-      'earth_mage': '/mages/earth_mage.png',
-      'fire_mage': '/mages/fire_mage.png',
-      'water_mage': '/mages/water_mage.png',
-      'lightning_mage': '/mages/lightning_mage.png',
-      'ice_mage': '/mages/ice_mage.png',
-      'shadow_mage': '/mages/shadow_mage.png',
-      'earth__dragonling': '/dragonling/earth__dragonling.png',
-      'infero_dragonling': '/dragonling/infero_dragonling.png',
-      'water_dragonling': '/dragonling/water_dragonling.png',
-      'lightning_dragonling': '/dragonling/lightning_dragonling.png',
-      'ice_dragonling': '/dragonling/ice_dragonling.png',
-      'void_dragonling': '/dragonling/void_dragonling.png',
-      'mountain_wyrm': '/dragons/mountain_wyrm.png',
-      'inferno_drake': '/dragons/inferno_drake.png',
-      'tsunami_serpent': '/dragons/tsunami_serpent.png',
-      'thunder_dragon': '/dragons/thunder_dragon.png',
-      'frost_wyvern': '/dragons/frost_wyvern.png',
-      'void_hydra': '/dragons/void_hydra.png'
-    };
-    
-    return avatarMap[avatarKey] || '/mages/earth_mage.png';
-  };
+  // Use shared avatar helper function
 
   return (
     <div className="mb-12">

@@ -1,3 +1,5 @@
+import React from 'react';
+
 const ResourceSummary = ({ character }) => {
   if (!character) return null;
 

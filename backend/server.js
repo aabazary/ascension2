@@ -32,9 +32,16 @@ app.use(cors({
 // Rate limiting
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100 // limit each IP to 100 requests per windowMs
+  max: 1000 // limit each IP to 1000 requests per windowMs
 });
-app.use(limiter);
+
+// Apply rate limiting to all routes except leaderboard
+app.use((req, res, next) => {
+  if (req.path.startsWith('/api/leaderboard')) {
+    return next(); // Skip rate limiting for leaderboard
+  }
+  return limiter(req, res, next);
+});
 
 // Body parsing middleware
 app.use(express.json({ limit: '10mb' }));

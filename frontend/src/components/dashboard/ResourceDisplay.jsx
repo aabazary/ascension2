@@ -1,3 +1,5 @@
+import React from 'react';
+
 const ResourceDisplay = ({ character }) => {
   if (!character) return null;
 

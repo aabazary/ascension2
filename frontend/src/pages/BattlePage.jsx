@@ -1,5 +1,5 @@
 import { useBattle } from '../hooks/useBattle';
-import { TIER_THEMES } from '../constants';
+import { useCharacterSync } from '../hooks/useCharacterSync';
 import Header from '../components/shared/Header';
 import TierSelection from '../components/battle/TierSelection';
 import BattleField from '../components/battle/BattleField';
@@ -8,7 +8,7 @@ import CombatLog from '../components/battle/CombatLog';
 
 const BattlePage = () => {
   const {
-    character,
+    character: initialCharacter,
     selectedTier,
     battleConfig,
     isBattleStarted,
@@ -34,15 +34,17 @@ const BattlePage = () => {
     castSpell,
     resetBattle,
     handleLogout,
-    handleProfileUpdated
+    handleProfileUpdated,
+    currentTheme,
+    tierConfig
   } = useBattle();
+
+  // Keep character in sync with cache updates
+  const character = useCharacterSync(initialCharacter);
 
   if (!character) {
     return null;
   }
-
-  const currentTheme = TIER_THEMES[selectedTier];
-  const tierConfig = battleConfig?.tiers[selectedTier];
 
   return (
     <div className="min-h-screen bg-dark-bg">
@@ -52,6 +54,7 @@ const BattlePage = () => {
         onLogout={handleLogout}
         userData={userData}
         onProfileUpdated={handleProfileUpdated}
+        selectedCharacter={character}
       />
 
       {/* Main Content */}

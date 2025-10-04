@@ -1,32 +1,11 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProfileModal from '../ProfileModal';
+import { getAvatarImage } from '../../constants/avatars';
 
-const Header = ({ showDashboard = true, showLogout = false, onLogout, userData, onProfileUpdated }) => {
+const Header = ({ showDashboard = true, showLogout = false, onLogout, userData, onProfileUpdated, selectedCharacter }) => {
   const navigate = useNavigate();
   const [showProfileModal, setShowProfileModal] = useState(false);
-
-  // Available profile pictures for display
-  const profilePictures = [
-    { id: 'earth_mage', image: '/mages/earth_mage.png' },
-    { id: 'fire_mage', image: '/mages/fire_mage.png' },
-    { id: 'water_mage', image: '/mages/water_mage.png' },
-    { id: 'lightning_mage', image: '/mages/lightning_mage.png' },
-    { id: 'ice_mage', image: '/mages/ice_mage.png' },
-    { id: 'shadow_mage', image: '/mages/shadow_mage.png' },
-    { id: 'earth__dragonling', image: '/dragonling/earth__dragonling.png' },
-    { id: 'infero_dragonling', image: '/dragonling/infero_dragonling.png' },
-    { id: 'water_dragonling', image: '/dragonling/water_dragonling.png' },
-    { id: 'lightning_dragonling', image: '/dragonling/lightning_dragonling.png' },
-    { id: 'ice_dragonling', image: '/dragonling/ice_dragonling.png' },
-    { id: 'void_dragonling', image: '/dragonling/void_dragonling.png' },
-    { id: 'mountain_wyrm', image: '/dragons/mountain_wyrm.png' },
-    { id: 'inferno_drake', image: '/dragons/inferno_drake.png' },
-    { id: 'tsunami_serpent', image: '/dragons/tsunami_serpent.png' },
-    { id: 'thunder_dragon', image: '/dragons/thunder_dragon.png' },
-    { id: 'frost_wyvern', image: '/dragons/frost_wyvern.png' },
-    { id: 'void_hydra', image: '/dragons/void_hydra.png' }
-  ];
 
   const getProfileImageSrc = () => {
     if (!userData?.profilePicture) return '/mages/earth_mage.png'; // Default
@@ -35,8 +14,7 @@ const Header = ({ showDashboard = true, showLogout = false, onLogout, userData, 
       return userData.profilePicture; // Google profile image
     }
     
-    const picture = profilePictures.find(p => p.id === userData.profilePicture);
-    return picture?.image || '/mages/earth_mage.png';
+    return getAvatarImage(userData.profilePicture);
   };
 
   return (
@@ -55,6 +33,46 @@ const Header = ({ showDashboard = true, showLogout = false, onLogout, userData, 
         </button>
         
         <div className="flex items-center gap-4">
+          {/* Current tier resources */}
+          {selectedCharacter && (
+            <>
+              {/* Desktop version */}
+              <div className="hidden md:flex items-center gap-3 px-3 py-2 bg-dark-panel border border-dark-border rounded-lg">
+                <div className="text-xs text-gray-400">T{selectedCharacter.currentTier}:</div>
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1">
+                    <span className="text-xs">✨</span>
+                    <span className="text-xs text-neon-green font-mono">
+                      {selectedCharacter.resources?.gathering?.[selectedCharacter.currentTier] || 0}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="text-xs">⚔️</span>
+                    <span className="text-xs text-neon-pink font-mono">
+                      {selectedCharacter.resources?.minion?.[selectedCharacter.currentTier] || 0}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <span className="text-xs">👑</span>
+                    <span className="text-xs text-neon-yellow font-mono">
+                      {selectedCharacter.resources?.boss?.[selectedCharacter.currentTier] || 0}
+                    </span>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Mobile version */}
+              <div className="md:hidden flex items-center gap-1 px-2 py-1 bg-dark-panel border border-dark-border rounded text-xs">
+                <span className="text-gray-400">T{selectedCharacter.currentTier}</span>
+                <div className="flex items-center gap-1">
+                  <span className="text-neon-green">✨{selectedCharacter.resources?.gathering?.[selectedCharacter.currentTier] || 0}</span>
+                  <span className="text-neon-pink">⚔️{selectedCharacter.resources?.minion?.[selectedCharacter.currentTier] || 0}</span>
+                  <span className="text-neon-yellow">👑{selectedCharacter.resources?.boss?.[selectedCharacter.currentTier] || 0}</span>
+                </div>
+              </div>
+            </>
+          )}
+
           {/* Welcome message and profile picture */}
           {userData && (
             <div className="flex items-center gap-3">

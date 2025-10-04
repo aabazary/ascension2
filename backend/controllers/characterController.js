@@ -60,7 +60,7 @@ const createCharacter = asyncHandler(async (req, res) => {
   }
 
   // Validate avatar
-  const validAvatars = ['earth', 'fire', 'water', 'lightning', 'ice', 'shadow'];
+  const validAvatars = ['earth_mage', 'fire_mage', 'water_mage', 'lightning_mage', 'ice_mage', 'shadow_mage'];
   if (!avatar || !validAvatars.includes(avatar)) {
     return res.status(400).json({
       success: false,
@@ -162,6 +162,13 @@ const updateCharacter = asyncHandler(async (req, res) => {
 
   // Update avatar if provided
   if (avatar) {
+    const validAvatars = ['earth_mage', 'fire_mage', 'water_mage', 'lightning_mage', 'ice_mage', 'shadow_mage'];
+    if (!validAvatars.includes(avatar)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid avatar'
+      });
+    }
     character.avatar = avatar;
   }
 

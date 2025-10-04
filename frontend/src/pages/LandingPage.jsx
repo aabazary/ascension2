@@ -1,26 +1,55 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AuthModal from '../components/AuthModal';
 import Header from '../components/shared/Header';
 import api from '../utils/api';
+import { clearAllCaches } from '../utils/cacheUtils';
+
+// Cache for leaderboard data
+const leaderboardCache = {
+  data: null,
+  timestamp: 0,
+  ttl: 5 * 60 * 1000 // 5 minutes cache
+};
 
 const LandingPage = ({ setIsAuthenticated, userData, setUserData }) => {
   const [isAuthModalOpen, setIsAuthModalOpen] = useState(false);
   const [highScores, setHighScores] = useState([]);
   const navigate = useNavigate();
 
-  useEffect(() => {
-    fetchLeaderboard();
+  // Check if cache is valid
+  const isCacheValid = useMemo(() => {
+    return leaderboardCache.data && 
+           (Date.now() - leaderboardCache.timestamp) < leaderboardCache.ttl;
   }, []);
+
+  useEffect(() => {
+    // Use cached data if available and valid
+    if (isCacheValid) {
+      setHighScores(leaderboardCache.data);
+      return;
+    }
+    
+    fetchLeaderboard();
+  }, [isCacheValid]);
 
   const fetchLeaderboard = async () => {
     try {
       const response = await api.get('/leaderboard?limit=5');
       if (response.data.success) {
-        setHighScores(response.data.leaderboard);
+        const leaderboardData = response.data.leaderboard;
+        setHighScores(leaderboardData);
+        
+        // Update cache
+        leaderboardCache.data = leaderboardData;
+        leaderboardCache.timestamp = Date.now();
       }
     } catch (error) {
       console.error('Failed to fetch leaderboard:', error);
+      // Use cached data if available, even if expired
+      if (leaderboardCache.data) {
+        setHighScores(leaderboardCache.data);
+      }
     }
   };
 
@@ -38,6 +67,7 @@ const LandingPage = ({ setIsAuthenticated, userData, setUserData }) => {
     localStorage.removeItem('user');
     setUserData(null);
     setIsAuthenticated(false);
+    clearAllCaches(); // Clear all caches on logout
   };
 
   const handleGoToDashboard = () => {

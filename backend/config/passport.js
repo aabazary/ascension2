@@ -21,21 +21,27 @@ passport.use(new GoogleStrategy({
     if (user) {
       // Link Google account to existing user
       user.googleId = profile.id;
+      user.originalGoogleProfilePicture = profile.photos[0]?.value || '';
+      user.profilePicture = profile.photos[0]?.value || '';
       await user.save();
       return done(null, user);
     }
 
     // Create new user (no password field for OAuth users)
+    const googleProfilePicture = profile.photos[0]?.value || '';
+    
     user = await User.create({
       googleId: profile.id,
       username: profile.emails[0].value.split('@')[0].toLowerCase() + Math.random().toString(36).substr(2, 4),
       email: profile.emails[0].value,
-      profilePicture: profile.photos[0]?.value || '' // Google profile image
+      profilePicture: googleProfilePicture, // Google profile image
+      originalGoogleProfilePicture: googleProfilePicture // Store original Google profile image
       // No password field - OAuth users don't have passwords
     });
 
     return done(null, user);
   } catch (error) {
+    console.error('Google OAuth error:', error);
     return done(error, null);
   }
 }));

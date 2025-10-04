@@ -5,6 +5,7 @@ import Dashboard from './pages/Dashboard';
 import GatheringPage from './pages/GatheringPage';
 import BattlePage from './pages/BattlePage';
 import ResetPassword from './pages/ResetPassword';
+import { clearAllCaches } from './utils/cacheUtils';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -46,6 +47,7 @@ function App() {
                   localStorage.setItem('user', JSON.stringify(data.user));
                   setUserData(data.user);
                   setIsAuthenticated(true);
+                  clearAllCaches(); // Clear caches on login to ensure fresh data
                 }
               }
     } catch (error) {
@@ -62,7 +64,7 @@ function App() {
         />
         <Route 
           path="/dashboard" 
-          element={isAuthenticated ? <Dashboard setIsAuthenticated={setIsAuthenticated} /> : <Navigate to="/" />} 
+          element={isAuthenticated ? <Dashboard setIsAuthenticated={setIsAuthenticated} userData={userData} setUserData={setUserData} /> : <Navigate to="/" />} 
         />
         <Route 
           path="/gathering" 

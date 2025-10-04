@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import api from '../utils/api';
+import { MAGE_AVATARS } from '../constants/avatars';
 
 const CharacterEditModal = ({ isOpen, onClose, character, onCharacterUpdated }) => {
   const [formData, setFormData] = useState({
@@ -11,14 +12,7 @@ const CharacterEditModal = ({ isOpen, onClose, character, onCharacterUpdated }) 
   const [message, setMessage] = useState('');
 
   // Available character avatars (only mages)
-  const characterAvatars = [
-    { id: 'earth_mage', name: 'Earth Mage', image: '/mages/earth_mage.png' },
-    { id: 'fire_mage', name: 'Fire Mage', image: '/mages/fire_mage.png' },
-    { id: 'water_mage', name: 'Water Mage', image: '/mages/water_mage.png' },
-    { id: 'lightning_mage', name: 'Lightning Mage', image: '/mages/lightning_mage.png' },
-    { id: 'ice_mage', name: 'Ice Mage', image: '/mages/ice_mage.png' },
-    { id: 'shadow_mage', name: 'Shadow Mage', image: '/mages/shadow_mage.png' }
-  ];
+  const characterAvatars = MAGE_AVATARS;
 
   useEffect(() => {
     if (isOpen && character) {

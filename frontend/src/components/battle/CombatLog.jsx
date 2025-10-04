@@ -1,3 +1,5 @@
+import React from 'react';
+
 const CombatLog = ({ combatLog, isBattleStarted }) => {
   if (!isBattleStarted) return null;
 

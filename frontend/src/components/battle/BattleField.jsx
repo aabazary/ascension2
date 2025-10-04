@@ -1,3 +1,4 @@
+import React from 'react';
 import EnergyWave from '../EnergyWave';
 
 const BattleField = ({
