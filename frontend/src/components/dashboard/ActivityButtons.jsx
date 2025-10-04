@@ -1,22 +1,19 @@
 import { useNavigate } from 'react-router-dom';
 
-const ActivityButtons = ({ selectedCharacter }) => {
+const ActivityButtons = ({ character }) => {
   const navigate = useNavigate();
 
-  const handleGatheringClick = () => {
-    navigate('/gathering', { state: { character: selectedCharacter } });
-  };
-
-  const handleBattleClick = () => {
-    navigate('/battle', { state: { character: selectedCharacter } });
-  };
+  if (!character) return null;
 
   return (
     <div className="mb-12">
-      <div className="grid md:grid-cols-2 gap-6">
+      <h3 className="font-arcade text-lg text-neon-green mb-6 text-center">
+        ACTIVITIES
+      </h3>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Gathering Button */}
         <button
-          onClick={handleGatheringClick}
+          onClick={() => navigate('/gathering', { state: { character } })}
           className="arcade-panel p-8 text-center hover:scale-105 transition-transform group"
         >
           <div className="text-6xl mb-4 group-hover:animate-bounce">✨</div>
@@ -31,7 +28,7 @@ const ActivityButtons = ({ selectedCharacter }) => {
 
         {/* Battle Button */}
         <button
-          onClick={handleBattleClick}
+          onClick={() => navigate('/battle', { state: { character } })}
           className="arcade-panel p-8 text-center hover:scale-105 transition-transform group"
         >
           <div className="text-6xl mb-4 group-hover:animate-bounce">⚔️</div>

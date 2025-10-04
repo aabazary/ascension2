@@ -1,32 +1,31 @@
-const CombatLog = ({ combatLog }) => {
-  const getLogColor = (type) => {
-    switch (type) {
-      case 'action': return 'text-blue-400';
-      case 'damage': return 'text-red-400';
-      case 'miss': return 'text-yellow-400';
-      case 'crit': return 'text-purple-400';
-      case 'turn': return 'text-green-400';
-      default: return 'text-gray-400';
-    }
-  };
+const CombatLog = ({ combatLog, isBattleStarted }) => {
+  if (!isBattleStarted) return null;
 
   return (
-    <div className="arcade-panel">
-      <h3 className="font-arcade text-sm text-neon-green mb-4 text-center">COMBAT LOG</h3>
-      <div className="max-h-32 overflow-y-auto space-y-1">
+    <div className="arcade-panel mb-6">
+      <h3 className="font-arcade text-sm text-neon-purple mb-3 text-center">
+        COMBAT LOG
+      </h3>
+      <div className="bg-black/50 rounded-lg p-3 max-h-32 overflow-y-auto">
         {combatLog.length === 0 ? (
-          <p className="text-gray-500 text-sm text-center">No combat activity yet...</p>
+          <div className="text-gray-500 text-sm text-center">Battle log will appear here...</div>
         ) : (
-          combatLog.map((entry) => (
-            <div key={entry.id} className="text-xs">
-              <span className="text-gray-500">
-                {new Date(entry.timestamp).toLocaleTimeString()}
-              </span>
-              <span className={`ml-2 ${getLogColor(entry.type)}`}>
+          <div className="space-y-1">
+            {combatLog.map((entry) => (
+              <div 
+                key={entry.id} 
+                className={`text-xs ${
+                  entry.type === 'crit' ? 'text-yellow-400 font-bold' :
+                  entry.type === 'damage' ? 'text-red-400' :
+                  entry.type === 'miss' ? 'text-gray-400' :
+                  entry.type === 'action' ? 'text-blue-400' :
+                  'text-neon-purple'
+                }`}
+              >
                 {entry.message}
-              </span>
-            </div>
-          ))
+              </div>
+            ))}
+          </div>
         )}
       </div>
     </div>

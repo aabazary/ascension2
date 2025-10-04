@@ -1,4 +1,6 @@
 const ResourceDisplay = ({ character }) => {
+  if (!character) return null;
+
   return (
     <div className="mb-12 arcade-panel">
       <h3 className="font-arcade text-lg text-neon-green mb-6 text-center">

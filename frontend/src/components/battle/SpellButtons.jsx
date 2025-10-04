@@ -1,21 +1,27 @@
-const SpellButtons = ({ spells, isPlayerTurn, gameEnded, onCastSpell }) => {
+const SpellButtons = ({ spells, onCastSpell }) => {
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
-      {spells.map((spell) => (
-        <button
-          key={spell.name}
-          onClick={() => onCastSpell(spell)}
-          disabled={!isPlayerTurn || gameEnded}
-          className="arcade-button p-4 text-center disabled:opacity-50 disabled:cursor-not-allowed hover:scale-105 transition-transform"
-          title={`Hit: ${Math.round(spell.hitChance * 100)}% | Crit: ${Math.round(spell.critChance * 100)}% | Damage: ${spell.damage}`}
-        >
-          <div className="text-2xl mb-2">{spell.emoji}</div>
-          <div className="font-arcade text-sm">{spell.name}</div>
-          <div className="text-xs text-gray-400 mt-1">
-            {Math.round(spell.hitChance * 100)}% hit, {Math.round(spell.critChance * 100)}% crit
-          </div>
-        </button>
-      ))}
+    <div className="arcade-panel mb-8">
+      <h3 className="font-arcade text-sm text-neon-purple mb-4 text-center">
+        CHOOSE YOUR SPELL
+      </h3>
+      <div className="grid grid-cols-3 gap-4">
+        {spells.map((spell, index) => (
+          <button
+            key={index}
+            onClick={() => onCastSpell(spell)}
+            className="group relative p-4 bg-dark-bg border border-dark-border rounded-lg hover:border-neon-purple transition-all"
+            title={`${spell.description}\nHit: ${(spell.hitChance * 100).toFixed(0)}% | Damage: ${spell.damage} | Crit: ${(spell.critChance * 100).toFixed(0)}%`}
+          >
+            <div className="text-3xl mb-2">{spell.emoji}</div>
+            <div className="font-arcade text-sm text-white mb-1">{spell.name}</div>
+            <div className="text-xs text-gray-400">
+              <div>Hit: {(spell.hitChance * 100).toFixed(0)}%</div>
+              <div>Dmg: {spell.damage}</div>
+              <div>Crit: {(spell.critChance * 100).toFixed(0)}%</div>
+            </div>
+          </button>
+        ))}
+      </div>
     </div>
   );
 };
