@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
-import { updateCharacterCache } from '../utils/cacheUtils';
 import { useCharacter } from '../contexts/CharacterContext';
 
 // Cache for gathering config
@@ -300,9 +299,36 @@ export const useGathering = () => {
       
       setGameResult(response.data);
       
-      // Update character cache with new resources if successful
-      if (response.data.success && response.data.resourcesGained > 0) {
-        updateCharacterCache(character._id, 'gathering', selectedTier, response.data.resourcesGained);
+      // Update character context with new resources if successful
+      if (response.data.success && response.data.character) {
+        // Transform resources from array format to object format (like the Character model's toJSON method)
+        const transformResources = (resourcesArray) => {
+          const resourcesObj = {
+            gathering: {},
+            minion: {},
+            boss: {}
+          };
+          
+          if (resourcesArray && Array.isArray(resourcesArray)) {
+            resourcesArray.forEach(resource => {
+              if (resourcesObj[resource.type]) {
+                resourcesObj[resource.type][resource.tier] = resource.count;
+              }
+            });
+          }
+          
+          return resourcesObj;
+        };
+        
+        // The backend returns partial character data (stats and resources in array format)
+        // We need to merge it with the existing character data and transform resources
+        const updatedCharacter = {
+          ...character,
+          stats: response.data.character.stats,
+          resources: transformResources(response.data.character.resources)
+        };
+        
+        updateCharacter(updatedCharacter);
       }
     } catch (error) {
       console.error('Failed to submit gathering result:', error);

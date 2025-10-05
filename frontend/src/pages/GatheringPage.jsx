@@ -1,5 +1,4 @@
 import { TIER_THEMES } from '../constants';
-import { useCharacterSync } from '../hooks/useCharacterSync';
 import Header from '../components/shared/Header';
 import GatheringTierSelection from '../components/gathering/GatheringTierSelection';
 import GatheringGameField from '../components/gathering/GatheringGameField';
@@ -7,7 +6,7 @@ import { useGathering } from '../hooks/useGathering';
 
 const GatheringPage = () => {
   const {
-    character: initialCharacter,
+    character,
     isLoading,
     userData,
     selectedTier,
@@ -28,8 +27,6 @@ const GatheringPage = () => {
     handleProfileUpdated
   } = useGathering();
 
-  // Keep character in sync with cache updates
-  const character = useCharacterSync(initialCharacter);
 
   // Show loading state while character is loading
   if (isLoading || !character) {

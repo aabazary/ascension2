@@ -1,5 +1,4 @@
 import { useBossBattle } from '../hooks/useBossBattle';
-import { useCharacterSync } from '../hooks/useCharacterSync';
 import Header from '../components/shared/Header';
 import TierSelection from '../components/battle/TierSelection';
 import BattleField from '../components/battle/BattleField';
@@ -8,7 +7,7 @@ import CombatLog from '../components/battle/CombatLog';
 
 const BossBattlePage = () => {
   const {
-    character: initialCharacter,
+    character,
     isLoading,
     selectedTier,
     battleConfig,
@@ -39,9 +38,6 @@ const BossBattlePage = () => {
     currentTheme,
     tierConfig
   } = useBossBattle();
-
-  // Keep character in sync with cache updates
-  const character = useCharacterSync(initialCharacter);
 
   // Show loading state while character is loading
   if (isLoading || !character) {

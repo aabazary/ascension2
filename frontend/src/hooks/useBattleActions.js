@@ -30,6 +30,7 @@ export const useBattleActions = (
   submitBattleResult,
   initBattle,
   combatLog,
+  updateCharacter,
   isBossBattle = false
 ) => {
   // Start battle
@@ -428,9 +429,36 @@ export const useBattleActions = (
     
     setBattleResult(result);
     
-    // Update character cache with new resources if won
-    if (result.won && result.resourcesGained > 0) {
-      updateCharacterCache(character._id, isBossBattle ? 'boss' : 'minion', selectedTier, result.resourcesGained);
+    // Update character context with updated character data if available
+    if (result.character && updateCharacter) {
+      // Transform resources from array format to object format (like the Character model's toJSON method)
+      const transformResources = (resourcesArray) => {
+        const resourcesObj = {
+          gathering: {},
+          minion: {},
+          boss: {}
+        };
+        
+        if (resourcesArray && Array.isArray(resourcesArray)) {
+          resourcesArray.forEach(resource => {
+            if (resourcesObj[resource.type]) {
+              resourcesObj[resource.type][resource.tier] = resource.count;
+            }
+          });
+        }
+        
+        return resourcesObj;
+      };
+      
+      // The backend returns partial character data (stats and resources in array format)
+      // We need to merge it with the existing character data and transform resources
+      const updatedCharacter = {
+        ...character,
+        stats: result.character.stats,
+        resources: transformResources(result.character.resources)
+      };
+      
+      updateCharacter(updatedCharacter);
     }
     
     // Update health values from battle stats if available

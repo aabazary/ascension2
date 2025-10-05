@@ -46,6 +46,7 @@ export const useBossBattle = () => {
     api.submitBattleResult,
     api.initBattle,
     state.combatLog,
+    state.updateCharacter,
     true // isBossBattle
   );
 

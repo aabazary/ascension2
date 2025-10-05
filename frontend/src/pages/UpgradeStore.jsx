@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useCharacterSync } from '../hooks/useCharacterSync';
 import { useUpgrade } from '../hooks/useUpgrade';
+import { useCharacter } from '../contexts/CharacterContext';
 import Header from '../components/shared/Header';
 import GearDisplay from '../components/upgrade/GearDisplay';
 import UpgradeModal from '../components/upgrade/UpgradeModal';
@@ -102,7 +102,7 @@ const calculateTotalHealthBonus = (character) => {
 const UpgradeStore = ({ userData, onProfileUpdated }) => {
   const navigate = useNavigate();
   const location = useLocation();
-  const character = useCharacterSync(location.state?.character);
+  const { selectedCharacter: character } = useCharacter();
   
   const {
     upgradeStatus,

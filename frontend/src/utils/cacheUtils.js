@@ -5,8 +5,6 @@ export const charactersCache = {
   ttl: 2 * 60 * 1000 // 2 minutes cache
 };
 
-// Cache update listeners
-let cacheUpdateListeners = new Set();
 
 // Function to update character cache with new resource data
 export const updateCharacterCache = (characterId, resourceType, tier, amount) => {
@@ -35,8 +33,6 @@ export const updateCharacterCache = (characterId, resourceType, tier, amount) =>
   charactersCache.data = updatedCharacters;
   charactersCache.timestamp = Date.now();
   
-  // Notify all listeners of the cache update
-  cacheUpdateListeners.forEach(listener => listener(updatedCharacters));
 };
 
 // Function to update character cache with full character data (for upgrades, etc.)
@@ -57,27 +53,13 @@ export const updateCharacterCacheFull = (updatedCharacter) => {
   charactersCache.data = updatedCharacters;
   charactersCache.timestamp = Date.now();
   
-  // Notify all listeners of the cache update
-  cacheUpdateListeners.forEach(listener => listener(updatedCharacters));
 };
 
-// Function to invalidate character cache
-export const invalidateCharacterCache = () => {
-  charactersCache.data = null;
-  charactersCache.timestamp = 0;
-};
-
-// Function to get character from cache
-export const getCharacterFromCache = (characterId) => {
-  if (!charactersCache.data) return null;
-  return charactersCache.data.find(char => char._id === characterId);
-};
 
 // Function to clear all caches (useful for logout)
 export const clearAllCaches = () => {
   charactersCache.data = null;
   charactersCache.timestamp = 0;
-  cacheUpdateListeners.clear();
   
   // Clear other caches if they exist
   if (typeof window !== 'undefined') {
@@ -93,16 +75,3 @@ export const clearAllCaches = () => {
   }
 };
 
-// Function to initialize cache with a single character (for pages like BattlePage/GatheringPage)
-export const initializeCharacterCache = (character) => {
-  if (character) {
-    charactersCache.data = [character];
-    charactersCache.timestamp = Date.now();
-  }
-};
-
-// Function to subscribe to cache updates
-export const subscribeToCacheUpdates = (listener) => {
-  cacheUpdateListeners.add(listener);
-  return () => cacheUpdateListeners.delete(listener);
-};

@@ -84,6 +84,7 @@ export const useBattleState = (isBossBattle = false) => {
     character,
     isLoading,
     navigate,
+    updateCharacter,
     
     // Core battle states
     selectedTier,

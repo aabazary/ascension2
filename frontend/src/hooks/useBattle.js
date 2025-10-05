@@ -45,7 +45,8 @@ export const useBattle = () => {
     state.addCombatLog,
     api.submitBattleResult,
     api.initBattle,
-    state.combatLog
+    state.combatLog,
+    state.updateCharacter
   );
 
   return {
