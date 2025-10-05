@@ -8,6 +8,7 @@ import { useGathering } from '../hooks/useGathering';
 const GatheringPage = () => {
   const {
     character: initialCharacter,
+    isLoading,
     userData,
     selectedTier,
     isPlaying,
@@ -30,12 +31,22 @@ const GatheringPage = () => {
   // Keep character in sync with cache updates
   const character = useCharacterSync(initialCharacter);
 
-  if (!character) {
-    return null;
+  // Show loading state while character is loading
+  if (isLoading || !character) {
+    return (
+      <div className="min-h-screen bg-dark-bg flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-neon-green mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading character...</p>
+        </div>
+      </div>
+    );
   }
 
-  const currentTheme = TIER_THEMES[selectedTier];
-  const config = gatheringConfig?.tiers[selectedTier];
+  // Ensure selectedTier never exceeds 5 (no Master essence gathering)
+  const safeSelectedTier = Math.min(selectedTier, 5);
+  const currentTheme = TIER_THEMES[safeSelectedTier];
+  const config = gatheringConfig?.tiers[safeSelectedTier];
 
   return (
     <div className="min-h-screen bg-dark-bg">

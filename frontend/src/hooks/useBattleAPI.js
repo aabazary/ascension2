@@ -8,7 +8,7 @@ const battleConfigCache = {
   ttl: 10 * 60 * 1000 // 10 minutes cache
 };
 
-export const useBattleAPI = (character, navigate, setBattleConfig, setUserData) => {
+export const useBattleAPI = (character, navigate, setBattleConfig, setUserData, isLoading) => {
   // Check if cache is valid
   const isCacheValid = useMemo(() => {
     return battleConfigCache.data && 
@@ -17,10 +17,12 @@ export const useBattleAPI = (character, navigate, setBattleConfig, setUserData) 
 
   // Fetch battle config
   useEffect(() => {
-    if (!character) {
+    if (!isLoading && !character) {
       navigate('/dashboard');
       return;
     }
+    
+    if (!character) return; // Wait for character to load
     
     // Use cached data if available and valid
     if (isCacheValid) {
@@ -30,7 +32,7 @@ export const useBattleAPI = (character, navigate, setBattleConfig, setUserData) 
     }
     
     fetchUserData();
-  }, [character, navigate, isCacheValid]);
+  }, [character, isLoading, navigate, isCacheValid]);
 
   const fetchUserData = async () => {
     try {

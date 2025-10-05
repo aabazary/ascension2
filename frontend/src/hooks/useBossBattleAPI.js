@@ -10,7 +10,7 @@ const battleConfigCache = {
   ttl: 10 * 60 * 1000 // 10 minutes cache
 };
 
-export const useBossBattleAPI = (character, navigate, setBattleConfig, setUserData) => {
+export const useBossBattleAPI = (character, navigate, setBattleConfig, setUserData, isLoading) => {
   const [userData, setUserDataLocal] = useState(null);
   const location = useLocation();
 
@@ -22,10 +22,12 @@ export const useBossBattleAPI = (character, navigate, setBattleConfig, setUserDa
 
   // Fetch battle config and user data
   useEffect(() => {
-    if (!character) {
+    if (!isLoading && !character) {
       navigate('/dashboard');
       return;
     }
+    
+    if (!character) return; // Wait for character to load
     
     // Use cached data if available and valid
     if (isCacheValid) {
@@ -40,7 +42,7 @@ export const useBossBattleAPI = (character, navigate, setBattleConfig, setUserDa
       setUserDataLocal(location.state.userData);
       setUserData(location.state.userData);
     }
-  }, [character, navigate, isCacheValid, location.state, setUserData, setBattleConfig]);
+  }, [character, isLoading, navigate, isCacheValid, location.state, setUserData, setBattleConfig]);
 
   const fetchUserData = async () => {
     try {

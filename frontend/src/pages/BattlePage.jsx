@@ -9,6 +9,7 @@ import CombatLog from '../components/battle/CombatLog';
 const BattlePage = () => {
   const {
     character: initialCharacter,
+    isLoading,
     selectedTier,
     battleConfig,
     isBattleStarted,
@@ -42,8 +43,16 @@ const BattlePage = () => {
   // Keep character in sync with cache updates
   const character = useCharacterSync(initialCharacter);
 
-  if (!character) {
-    return null;
+  // Show loading state while character is loading
+  if (isLoading || !character) {
+    return (
+      <div className="min-h-screen bg-dark-bg flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-neon-green mx-auto mb-4"></div>
+          <p className="text-gray-400">Loading character...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -67,6 +76,7 @@ const BattlePage = () => {
             </h2>
             <p className="text-gray-400">Character: {character.name}</p>
             <div className={`h-1 w-32 mx-auto mt-4 bg-gradient-to-r ${currentTheme.color} rounded-full ${currentTheme.glow}`}></div>
+            
           </div>
 
           {/* Tier Selection */}
@@ -150,11 +160,34 @@ const BattlePage = () => {
               </div>
 
               {/* Spell Buttons */}
-              {isBattleStarted && !gameEnded && isPlayerTurn && (
-                <SpellButtons
-                  spells={spells}
-                  onCastSpell={castSpell}
-                />
+              {isBattleStarted && !gameEnded && (
+                <div className="relative">
+                  <SpellButtons
+                    spells={spells}
+                    onCastSpell={castSpell}
+                    disabled={!isPlayerTurn}
+                  />
+                  
+                  {/* Small refresh button in top right of spell area */}
+                  <button 
+                    onClick={async () => {
+                      await resetBattle();
+                      // Auto-start new battle
+                      setTimeout(() => {
+                        startBattle();
+                      }, 100);
+                    }}
+                    disabled={!isPlayerTurn}
+                    className={`absolute top-3 right-3 w-7 h-7 rounded-full transition-all text-xs flex items-center justify-center ${
+                      !isPlayerTurn 
+                        ? 'bg-gray-800 border border-gray-600 opacity-50 cursor-not-allowed text-gray-500' 
+                        : 'bg-dark-bg border border-neon-purple text-neon-purple cursor-pointer hover:bg-neon-purple hover:text-black hover:shadow-lg hover:shadow-neon-purple/30'
+                    }`}
+                    title={!isPlayerTurn ? "Wait for your turn" : "Restart battle"}
+                  >
+                    ↻
+                  </button>
+                </div>
               )}
 
               {/* Combat Log */}

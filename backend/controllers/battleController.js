@@ -324,6 +324,11 @@ const startBossBattle = asyncHandler(async (req, res) => {
       character.stats.totalBattles = (character.stats.totalBattles || 0) + 1;
       character.stats.totalBosses = (character.stats.totalBosses || 0) + 1;
       
+      // Track Master kills specifically for Tier 6
+      if (tier === 6) {
+        character.stats.masterKills = (character.stats.masterKills || 0) + 1;
+      }
+      
       // Master boss (Tier 6) doesn't give resources, only tracks kills
       let resourcesGained = 0;
       if (tier < 6) {

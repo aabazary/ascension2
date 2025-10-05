@@ -11,7 +11,8 @@ export const useBossBattle = () => {
     state.character,
     state.navigate,
     state.setBattleConfig,
-    state.setUserData
+    state.setUserData,
+    state.isLoading
   );
   
   // Game actions

@@ -20,16 +20,16 @@ const GatheringTierSelection = ({
           return (
             <button
               key={tier}
-              onClick={() => !isPlaying && tier <= character.currentTier && onTierSelect(tier)}
-              disabled={tier > character.currentTier || isPlaying}
+              onClick={() => !isPlaying && tier <= Math.min(character.currentTier, 5) && onTierSelect(tier)}
+              disabled={tier > Math.min(character.currentTier, 5) || isPlaying}
               className={`relative px-3 py-3 font-arcade text-xs rounded-lg transition-all ${
                 selectedTier === tier
                   ? `bg-gradient-to-br ${theme.color} text-white ${theme.glow}`
-                  : tier <= character.currentTier
+                  : tier <= Math.min(character.currentTier, 5)
                   ? 'bg-dark-bg border border-dark-border hover:border-opacity-50'
                   : 'bg-dark-bg border border-dark-border opacity-30 cursor-not-allowed'
               }`}
-              title={tier > character.currentTier ? 'Locked' : theme.name}
+              title={tier > Math.min(character.currentTier, 5) ? 'Locked' : theme.name}
             >
               <div className="text-2xl mb-1">{theme.egg}</div>
               <div className="text-xs">T{tier}</div>

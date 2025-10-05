@@ -1,11 +1,14 @@
 import { useState, useEffect } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { TIER_THEMES } from '../constants';
+import api from '../utils/api';
+import { useCharacter } from '../contexts/CharacterContext';
 
 export const useBattleState = (isBossBattle = false) => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const character = location.state?.character;
+  const { selectedCharacter, updateCharacter, isLoading } = useCharacter();
+  
+  const character = selectedCharacter;
   
   // Core battle states
   const [selectedTier, setSelectedTier] = useState(character?.currentTier || 0);
@@ -42,6 +45,14 @@ export const useBattleState = (isBossBattle = false) => {
   // User data for header
   const [userData, setUserData] = useState(null);
 
+  // Handle missing character - redirect to dashboard (but wait for loading to complete)
+  useEffect(() => {
+    if (!isLoading && !character) {
+      navigate('/dashboard');
+      return;
+    }
+  }, [character, isLoading, navigate]);
+
   // Helper function to add combat log entries
   const addCombatLog = (message, type) => {
     const newEntry = {
@@ -71,6 +82,7 @@ export const useBattleState = (isBossBattle = false) => {
   return {
     // Character and navigation
     character,
+    isLoading,
     navigate,
     
     // Core battle states

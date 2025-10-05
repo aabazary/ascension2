@@ -8,17 +8,29 @@ import BossBattlePage from './pages/BossBattlePage';
 import UpgradeStore from './pages/UpgradeStore';
 import ResetPassword from './pages/ResetPassword';
 import { clearAllCaches } from './utils/cacheUtils';
+import { CharacterProvider } from './contexts/CharacterContext';
 
 function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [userData, setUserData] = useState(null);
+  // Initialize authentication state from localStorage to prevent redirect on refresh
+  const [isAuthenticated, setIsAuthenticated] = useState(() => {
+    const user = localStorage.getItem('user');
+    return !!user;
+  });
+  const [userData, setUserData] = useState(() => {
+    const user = localStorage.getItem('user');
+    return user ? JSON.parse(user) : null;
+  });
 
   useEffect(() => {
     // Check if user is authenticated (check localStorage for user data)
     const user = localStorage.getItem('user');
-    setIsAuthenticated(!!user);
-    if (user) {
+    // Only update state if it's different from initial state
+    if (user && !isAuthenticated) {
+      setIsAuthenticated(true);
       setUserData(JSON.parse(user));
+    } else if (!user && isAuthenticated) {
+      setIsAuthenticated(false);
+      setUserData(null);
     }
 
     // Handle OAuth redirect
@@ -58,38 +70,40 @@ function App() {
   };
 
   return (
-    <Router>
-      <Routes>
-        <Route 
-          path="/" 
-          element={<LandingPage setIsAuthenticated={setIsAuthenticated} userData={userData} setUserData={setUserData} />} 
-        />
-        <Route 
-          path="/dashboard" 
-          element={isAuthenticated ? <Dashboard setIsAuthenticated={setIsAuthenticated} userData={userData} setUserData={setUserData} /> : <Navigate to="/" />} 
-        />
-        <Route 
-          path="/gathering" 
-          element={isAuthenticated ? <GatheringPage /> : <Navigate to="/" />} 
-        />
-        <Route 
-          path="/battle" 
-          element={isAuthenticated ? <BattlePage /> : <Navigate to="/" />} 
-        />
-        <Route 
-          path="/boss-battle" 
-          element={isAuthenticated ? <BossBattlePage /> : <Navigate to="/" />} 
-        />
-        <Route 
-          path="/upgrade-store" 
-          element={isAuthenticated ? <UpgradeStore userData={userData} onProfileUpdated={setUserData} /> : <Navigate to="/" />} 
-        />
-        <Route 
-          path="/reset-password" 
-          element={<ResetPassword />} 
-        />
-      </Routes>
-    </Router>
+    <CharacterProvider>
+      <Router>
+        <Routes>
+          <Route 
+            path="/" 
+            element={<LandingPage setIsAuthenticated={setIsAuthenticated} userData={userData} setUserData={setUserData} />} 
+          />
+          <Route 
+            path="/dashboard" 
+            element={isAuthenticated ? <Dashboard setIsAuthenticated={setIsAuthenticated} userData={userData} setUserData={setUserData} /> : <Navigate to="/" />} 
+          />
+          <Route 
+            path="/gathering" 
+            element={isAuthenticated ? <GatheringPage /> : <Navigate to="/" />} 
+          />
+          <Route 
+            path="/battle" 
+            element={isAuthenticated ? <BattlePage /> : <Navigate to="/" />} 
+          />
+          <Route 
+            path="/boss-battle" 
+            element={isAuthenticated ? <BossBattlePage /> : <Navigate to="/" />} 
+          />
+          <Route 
+            path="/upgrade-store" 
+            element={isAuthenticated ? <UpgradeStore userData={userData} onProfileUpdated={setUserData} /> : <Navigate to="/" />} 
+          />
+          <Route 
+            path="/reset-password" 
+            element={<ResetPassword />} 
+          />
+        </Routes>
+      </Router>
+    </CharacterProvider>
   );
 }
 

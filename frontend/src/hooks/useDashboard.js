@@ -1,110 +1,25 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
-import { charactersCache, invalidateCharacterCache, clearAllCaches, subscribeToCacheUpdates } from '../utils/cacheUtils';
+import { clearAllCaches } from '../utils/cacheUtils';
+import { useCharacter } from '../contexts/CharacterContext';
 
 export const useDashboard = (setIsAuthenticated, setUserData) => {
-  const [characters, setCharacters] = useState([]);
-  const [selectedCharacter, setSelectedCharacter] = useState(null);
+  const { characters, selectedCharacter, selectCharacter, updateCharacter } = useCharacter();
   const [isCharacterModalOpen, setIsCharacterModalOpen] = useState(false);
   const [isCharacterEditModalOpen, setIsCharacterEditModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [characterToEdit, setCharacterToEdit] = useState(null);
   const [characterToDelete, setCharacterToDelete] = useState(null);
-  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
-  // Check if cache is valid
-  const isCacheValid = useMemo(() => {
-    return charactersCache.data && 
-           (Date.now() - charactersCache.timestamp) < charactersCache.ttl;
-  }, []);
-
-  useEffect(() => {
-    // Use cached data if available and valid
-    if (isCacheValid) {
-      setCharacters(charactersCache.data);
-      if (charactersCache.data.length > 0) {
-        selectCharacterFromStorage(charactersCache.data);
-      }
-      setLoading(false);
-      return;
-    }
-    
-    fetchCharacters();
-  }, [isCacheValid]);
-
-  // Subscribe to cache updates to keep selected character in sync
-  useEffect(() => {
-    const unsubscribe = subscribeToCacheUpdates((updatedCharacters) => {
-      setCharacters(updatedCharacters);
-      
-      // Update selected character if it exists in the updated data
-      if (selectedCharacter) {
-        const updatedSelectedCharacter = updatedCharacters.find(char => char._id === selectedCharacter._id);
-        if (updatedSelectedCharacter) {
-          setSelectedCharacter(updatedSelectedCharacter);
-        }
-      }
-    });
-
-    return unsubscribe;
-  }, [selectedCharacter]);
-
-  // Helper function to select character from localStorage or default to first
-  const selectCharacterFromStorage = (characters) => {
-    const savedCharacterId = localStorage.getItem('selectedCharacterId');
-    if (savedCharacterId) {
-      const savedCharacter = characters.find(char => char._id === savedCharacterId);
-      if (savedCharacter) {
-        setSelectedCharacter(savedCharacter);
-        return;
-      }
-    }
-    // Fallback to first character if no saved character found
-    setSelectedCharacter(characters[0]);
-  };
-
-  // Enhanced setSelectedCharacter that also saves to localStorage
+  // Enhanced setSelectedCharacter that uses context
   const handleCharacterSelect = (character) => {
-    setSelectedCharacter(character);
-    localStorage.setItem('selectedCharacterId', character._id);
-  };
-
-  const fetchCharacters = async () => {
-    try {
-      setLoading(true);
-      const response = await api.get('/characters');
-      if (response.data.success) {
-        const charactersData = response.data.characters;
-        setCharacters(charactersData);
-        
-        // Update cache
-        charactersCache.data = charactersData;
-        charactersCache.timestamp = Date.now();
-        
-        if (charactersData.length > 0) {
-          selectCharacterFromStorage(charactersData);
-        }
-      }
-    } catch (error) {
-      console.error('Failed to fetch characters:', error);
-      // Use cached data if available, even if expired
-      if (charactersCache.data) {
-        setCharacters(charactersCache.data);
-      if (charactersCache.data.length > 0) {
-        selectCharacterFromStorage(charactersCache.data);
-      }
-      }
-    } finally {
-      setLoading(false);
-    }
+    selectCharacter(character._id);
   };
 
   const handleCharacterCreated = async () => {
-    // Invalidate cache and fetch fresh data
-    invalidateCharacterCache();
-    await fetchCharacters();
+    // Characters will be automatically updated by the context
     setIsCharacterModalOpen(false);
   };
 
@@ -114,9 +29,7 @@ export const useDashboard = (setIsAuthenticated, setUserData) => {
   };
 
   const handleCharacterUpdated = async () => {
-    // Invalidate cache and fetch fresh data
-    invalidateCharacterCache();
-    await fetchCharacters();
+    // Characters will be automatically updated by the context
     setIsCharacterEditModalOpen(false);
     setCharacterToEdit(null);
   };
@@ -132,19 +45,8 @@ export const useDashboard = (setIsAuthenticated, setUserData) => {
     try {
       const response = await api.delete(`/characters/${characterToDelete._id}`);
       if (response.data.success) {
-        // Invalidate cache and fetch fresh data
-        invalidateCharacterCache();
-        await fetchCharacters();
-        
-        // If we deleted the selected character, select the first available one
-        if (selectedCharacter?._id === characterToDelete._id) {
-          if (charactersCache.data && charactersCache.data.length > 0) {
-            handleCharacterSelect(charactersCache.data[0]);
-          } else {
-            setSelectedCharacter(null);
-            localStorage.removeItem('selectedCharacterId');
-          }
-        }
+        // Characters will be automatically updated by the context
+        // If we deleted the selected character, the context will handle selection
       }
     } catch (error) {
       console.error('Failed to delete character:', error);
@@ -193,7 +95,6 @@ export const useDashboard = (setIsAuthenticated, setUserData) => {
     isConfirmModalOpen,
     characterToEdit,
     characterToDelete,
-    loading,
     
     // Actions
     setSelectedCharacter: handleCharacterSelect,

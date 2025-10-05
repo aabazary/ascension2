@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef, useMemo } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import { updateCharacterCache } from '../utils/cacheUtils';
+import { useCharacter } from '../contexts/CharacterContext';
 
 // Cache for gathering config
 const gatheringConfigCache = {
@@ -12,11 +13,12 @@ const gatheringConfigCache = {
 
 export const useGathering = () => {
   const navigate = useNavigate();
-  const location = useLocation();
-  const character = location.state?.character;
+  const { selectedCharacter, updateCharacter, isLoading } = useCharacter();
+  
+  const character = selectedCharacter;
   
   const [userData, setUserData] = useState(null);
-  const [selectedTier, setSelectedTier] = useState(character?.currentTier || 0);
+  const [selectedTier, setSelectedTier] = useState(Math.min(character?.currentTier || 0, 5));
   const [isPlaying, setIsPlaying] = useState(false);
   const [shaking, setShaking] = useState(false);
   const [clickable, setClickable] = useState(false);
@@ -42,10 +44,12 @@ export const useGathering = () => {
   }, []);
 
   useEffect(() => {
-    if (!character) {
+    if (!isLoading && !character) {
       navigate('/dashboard');
       return;
     }
+    
+    if (!character) return; // Wait for character to load
     
     // Use cached data if available and valid
     if (isCacheValid) {
@@ -55,7 +59,8 @@ export const useGathering = () => {
     }
     
     fetchUserData();
-  }, [character, navigate, isCacheValid]);
+  }, [character, isLoading, navigate, isCacheValid]);
+  
 
   const fetchUserData = async () => {
     try {
@@ -332,6 +337,7 @@ export const useGathering = () => {
   return {
     // State
     character,
+    isLoading,
     userData,
     selectedTier,
     isPlaying,

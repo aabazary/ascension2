@@ -111,6 +111,10 @@ const characterSchema = new mongoose.Schema({
       type: Number,
       default: 0
     },
+    masterKills: {
+      type: Number,
+      default: 0
+    },
     wins: {
       type: Number,
       default: 0

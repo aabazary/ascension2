@@ -1,6 +1,6 @@
 import React from 'react';
 
-const SpellButtons = ({ spells, onCastSpell }) => {
+const SpellButtons = ({ spells, onCastSpell, disabled = false }) => {
   return (
     <div className="arcade-panel mb-8">
       <h3 className="font-arcade text-sm text-neon-purple mb-4 text-center">
@@ -10,8 +10,13 @@ const SpellButtons = ({ spells, onCastSpell }) => {
         {spells.map((spell, index) => (
           <button
             key={index}
-            onClick={() => onCastSpell(spell)}
-            className="group relative p-4 bg-dark-bg border border-dark-border rounded-lg hover:border-neon-purple transition-all"
+            onClick={() => !disabled && onCastSpell(spell)}
+            disabled={disabled}
+            className={`group relative p-4 bg-dark-bg border border-dark-border rounded-lg transition-all ${
+              disabled 
+                ? 'opacity-50 cursor-not-allowed' 
+                : 'hover:border-neon-purple cursor-pointer'
+            }`}
             title={`${spell.description}\nDamage: ${spell.damage} | Hit: ${(spell.hitChance * 100).toFixed(0)}% | Crit: ${(spell.critChance * 100).toFixed(0)}%`}
           >
             <div className="text-3xl mb-2">{spell.emoji}</div>

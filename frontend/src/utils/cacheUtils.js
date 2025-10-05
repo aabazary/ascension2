@@ -81,11 +81,11 @@ export const clearAllCaches = () => {
   
   // Clear other caches if they exist
   if (typeof window !== 'undefined') {
-    // Clear any localStorage cache entries
+    // Clear any localStorage cache entries (but preserve user data)
     const keysToRemove = [];
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key && (key.startsWith('cache_') || key === 'selectedCharacterId' || key === 'user')) {
+      if (key && (key.startsWith('cache_') || key === 'selectedCharacterId' || key === 'cachedCharacter')) {
         keysToRemove.push(key);
       }
     }

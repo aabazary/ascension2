@@ -62,17 +62,17 @@ const seedDatabase = async () => {
         ring: {
           tier: tier,
           infused: tier >= 2,
-          infusionLevel: tier >= 2 ? Math.min(tier - 1, 3) : 0
+          infusionLevel: tier >= 2 ? Math.min(tier - 1, 18) : 0
         },
         cloak: {
           tier: tier,
           infused: tier >= 2,
-          infusionLevel: tier >= 2 ? Math.min(tier - 1, 3) : 0
+          infusionLevel: tier >= 2 ? Math.min(tier - 1, 18) : 0
         },
         belt: {
           tier: tier,
           infused: tier >= 2,
-          infusionLevel: tier >= 2 ? Math.min(tier - 1, 3) : 0
+          infusionLevel: tier >= 2 ? Math.min(tier - 1, 18) : 0
         }
       };
     };
@@ -91,6 +91,7 @@ const seedDatabase = async () => {
         totalBattles: 150,
         totalGathers: 200,
         totalBosses: 45,
+        masterKills: 2,
         wins: 120,
         losses: 30
       }
@@ -239,13 +240,14 @@ const seedDatabase = async () => {
       userId: user4._id,
       name: 'VeteranSlayer',
       avatar: 'shadow_mage',
-      currentTier: 5,
-      equipment: createEquipment(5),
-      resources: createResources(5),
+      currentTier: 6,
+      equipment: createEquipment(6),
+      resources: createResources(6),
       stats: {
         totalBattles: 200,
         totalGathers: 250,
         totalBosses: 60,
+        masterKills: 5,
         wins: 170,
         losses: 30
       }
@@ -270,7 +272,7 @@ const seedDatabase = async () => {
     user4.characters.push(char10._id);
 
     await user4.save();
-    console.log('✓ Created user: veteran with 2 characters (Tiers 5, 1)');
+    console.log('✓ Created user: veteran with 2 characters (Tiers 6, 1)');
 
     console.log('\n========================================');
     console.log('✓ Seed completed successfully!');
@@ -291,7 +293,7 @@ const seedDatabase = async () => {
     console.log('');
     console.log('4. Email: veteran@test.com');
     console.log('   Password: password123');
-    console.log('   Characters: VeteranSlayer (T5), CasualAlt (T1)');
+    console.log('   Characters: VeteranSlayer (T6), CasualAlt (T1)');
     console.log('========================================\n');
 
     await mongoose.connection.close();
