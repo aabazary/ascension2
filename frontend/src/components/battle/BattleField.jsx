@@ -15,6 +15,7 @@ const BattleField = ({
   playerProjectiles,
   enemyProjectiles,
   tierConfig,
+  selectedTier,
   isBossBattle = false
 }) => {
   return (
@@ -83,9 +84,13 @@ const BattleField = ({
       } ${enemyAttack ? 'scale-110' : ''}`}>
         <div className="mb-2 relative">
           <img 
-            src={isBossBattle ? (tierConfig?.bossImage || '/dragons/mountain_wyrm.png') : (tierConfig?.minionImage || '/dragonling/earth__dragonling.png')} 
+            src={isBossBattle && selectedTier === 6 ? 
+              `/mages/${character.avatar?.replace('_mage', '') || 'earth'}_mage.png` : 
+              (isBossBattle ? (tierConfig?.bossImage || '/dragons/mountain_wyrm.png') : (tierConfig?.minionImage || '/dragonling/earth__dragonling.png'))} 
             alt={isBossBattle ? (tierConfig?.bossName || 'Dragon') : (tierConfig?.minionName || 'Dragonling')}
-            className="w-24 h-24 xs:w-28 xs:h-28 sm:w-48 sm:h-48 md:w-64 md:h-64 lg:w-80 lg:h-80 mx-auto object-contain"
+            className={`w-24 h-24 xs:w-28 xs:h-28 sm:w-48 sm:h-48 md:w-64 md:h-64 lg:w-80 lg:h-80 mx-auto object-contain ${
+              isBossBattle && selectedTier === 6 ? 'brightness-50 contrast-150 sepia' : ''
+            }`}
           />
           {damageText && !damageText.isPlayer && (
             <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-4 sm:-translate-y-6 md:-translate-y-8 animate-bounce text-red-500 font-arcade text-lg sm:text-xl md:text-2xl">

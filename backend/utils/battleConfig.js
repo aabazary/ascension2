@@ -6,59 +6,66 @@ export const BATTLE_CONFIG = {
       minionName: 'Earth Dragonling',
       minionImage: '/dragonling/earth__dragonling.png',
       bossHealth: 200,
-      bossDamage: 20,
+      bossDamage: 50,
       bossName: 'Mountain Wyrm',
       bossImage: '/dragons/mountain_wyrm.png'
     },
     1: {
-      minionHealth: 225,
+      minionHealth: 240,
       minionDamage: 70,
       minionName: 'Inferno Dragonling',
       minionImage: '/dragonling/infero_dragonling.png',
       bossHealth: 400,
-      bossDamage: 80,
+      bossDamage: 85,
       bossName: 'Inferno Drake',
       bossImage: '/dragons/inferno_drake.png'
     },
     2: {
-      minionHealth: 250,
-      minionDamage: 25,
+      minionHealth: 500,
+      minionDamage: 135,
       minionName: 'Water Dragonling',
       minionImage: '/dragonling/water_dragonling.png',
-      bossHealth: 500,
-      bossDamage: 40,
+      bossHealth: 700,
+      bossDamage: 150,
       bossName: 'Tsunami Serpent',
       bossImage: '/dragons/tsunami_serpent.png'
     },
     3: {
-      minionHealth: 400,
-      minionDamage: 35,
+      minionHealth: 1300,
+      minionDamage: 300,
       minionName: 'Lightning Dragonling',
       minionImage: '/dragonling/lightning_dragonling.png',
-      bossHealth: 700,
-      bossDamage: 55,
+      bossHealth: 1500,
+      bossDamage: 350,
       bossName: 'Thunder Dragon',
       bossImage: '/dragons/thunder_dragon.png'
     },
     4: {
-      minionHealth: 600,
-      minionDamage: 50,
+      minionHealth: 3000,
+      minionDamage: 660,
       minionName: 'Ice Dragonling',
       minionImage: '/dragonling/ice_dragonling.png',
-      bossHealth: 1000,
-      bossDamage: 75,
+      bossHealth: 3500,
+      bossDamage: 750,
       bossName: 'Frost Wyvern',
       bossImage: '/dragons/frost_wyvern.png'
     },
     5: {
-      minionHealth: 900,
-      minionDamage: 70,
+      minionHealth: 7000,
+      minionDamage: 1500,
       minionName: 'Shadow Dragonling',
       minionImage: '/dragonling/void_dragonling.png',
-      bossHealth: 1500,
-      bossDamage: 100,
+      bossHealth: 10000,
+      bossDamage: 2000,
       bossName: 'Void Hydra',
       bossImage: '/dragons/void_hydra.png'
+    },
+    6: {
+      // Tier 6 has no minion - only Master boss battle
+      bossHealth: 25000,
+      bossDamage: 5000,
+      bossName: 'Master',
+      bossImage: '/mages/shadow_master.png' // Will be dynamically generated based on character avatar
     }
   },
   

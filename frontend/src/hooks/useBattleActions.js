@@ -226,6 +226,12 @@ export const useBattleActions = (
     if (!character?.equipment) return 2; // Missing all equipment
     
     const battleTier = selectedTier;
+    
+    // Master boss (Tier 6) never has vulnerable attacks
+    if (battleTier === 6) {
+      return 0; // Not vulnerable
+    }
+    
     const requiredTier = battleTier + 1; // Need pieces one tier higher
     
     let higherTierItems = 0;

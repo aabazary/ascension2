@@ -1,7 +1,8 @@
 import React from 'react';
 
-const CombatLog = ({ combatLog, isBattleStarted }) => {
-  if (!isBattleStarted) return null;
+const CombatLog = ({ combatLog, isBattleStarted, battleResult }) => {
+  // Show combat log during battle or after battle result (until new battle starts)
+  if (!isBattleStarted && !battleResult) return null;
 
   return (
     <div className="arcade-panel mb-6">

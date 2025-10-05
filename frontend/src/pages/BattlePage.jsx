@@ -95,25 +95,34 @@ const BattlePage = () => {
               </button>
             </div>
           ) : battleResult ? (
-            <div className="arcade-panel text-center p-4">
-              <div className={`text-4xl sm:text-5xl md:text-6xl mb-2 sm:mb-4 ${battleResult.won ? 'text-neon-green' : 'text-red-500'}`}>
-                {battleResult.won ? '🏆' : '💀'}
-              </div>
-              <h3 className={`font-arcade text-lg sm:text-xl md:text-2xl mb-2 sm:mb-4 ${battleResult.won ? 'text-neon-green' : 'text-red-500'}`}>
-                {battleResult.won ? 'VICTORY!' : 'DEFEAT!'}
-              </h3>
-              {battleResult.won && (
-                <div className="space-y-1 sm:space-y-2 mb-4 sm:mb-6">
-                  <p className="text-gray-400 text-sm sm:text-base">Resources Gained:</p>
-                  <p className="font-arcade text-xl sm:text-2xl md:text-3xl text-neon-yellow">
-                    {battleResult.resourcesGained || 0}
-                  </p>
+            <>
+              <div className="arcade-panel text-center p-4 mb-6">
+                <div className={`text-4xl sm:text-5xl md:text-6xl mb-2 sm:mb-4 ${battleResult.won ? 'text-neon-green' : 'text-red-500'}`}>
+                  {battleResult.won ? '🏆' : '💀'}
                 </div>
-              )}
-              <button onClick={resetBattle} className="arcade-button text-sm sm:text-base px-4 py-2">
-                BATTLE AGAIN
-              </button>
-            </div>
+                <h3 className={`font-arcade text-lg sm:text-xl md:text-2xl mb-2 sm:mb-4 ${battleResult.won ? 'text-neon-green' : 'text-red-500'}`}>
+                  {battleResult.won ? 'VICTORY!' : 'DEFEAT!'}
+                </h3>
+                {battleResult.won && (
+                  <div className="space-y-1 sm:space-y-2 mb-4 sm:mb-6">
+                    <p className="text-gray-400 text-sm sm:text-base">Resources Gained:</p>
+                    <p className="font-arcade text-xl sm:text-2xl md:text-3xl text-neon-yellow">
+                      {battleResult.resourcesGained || 0}
+                    </p>
+                  </div>
+                )}
+                <button onClick={resetBattle} className="arcade-button text-sm sm:text-base px-4 py-2">
+                  BATTLE AGAIN
+                </button>
+              </div>
+
+              {/* Combat Log - Show after battle result */}
+              <CombatLog
+                combatLog={combatLog}
+                isBattleStarted={isBattleStarted}
+                battleResult={battleResult}
+              />
+            </>
           ) : (
             <>
               {/* Battle Field */}
@@ -134,6 +143,7 @@ const BattlePage = () => {
                       playerProjectiles={playerProjectiles}
                       enemyProjectiles={enemyProjectiles}
                       tierConfig={tierConfig}
+                      selectedTier={selectedTier}
                     />
                   )}
                 </div>
@@ -151,6 +161,7 @@ const BattlePage = () => {
               <CombatLog
                 combatLog={combatLog}
                 isBattleStarted={isBattleStarted}
+                battleResult={battleResult}
               />
 
               {/* Instructions */}

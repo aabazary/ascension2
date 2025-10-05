@@ -43,6 +43,13 @@ export const TIER_THEMES = {
     glow: 'shadow-purple-500/50',
     egg: '🌑',
   },
+  6: {
+    name: 'Master',
+    color: 'from-gray-800 to-black',
+    borderColor: 'border-gray-700',
+    glow: 'shadow-gray-700/50',
+    egg: '👑',
+  },
 };
 
 export const ELEMENT_COLORS = {

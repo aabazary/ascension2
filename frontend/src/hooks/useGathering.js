@@ -72,9 +72,17 @@ export const useGathering = () => {
   const handleLogout = async () => {
     try {
       await api.post('/auth/logout');
+      localStorage.removeItem('user');
+      // Clear gathering config cache
+      gatheringConfigCache.data = null;
+      gatheringConfigCache.timestamp = 0;
       navigate('/');
     } catch (error) {
       console.error('Logout failed:', error);
+      localStorage.removeItem('user');
+      // Clear gathering config cache
+      gatheringConfigCache.data = null;
+      gatheringConfigCache.timestamp = 0;
       navigate('/');
     }
   };

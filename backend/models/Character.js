@@ -21,7 +21,7 @@ const characterSchema = new mongoose.Schema({
     type: Number,
     default: 0,
     min: 0,
-    max: 5
+    max: 6
   },
   equipment: {
     ring: {
@@ -29,7 +29,7 @@ const characterSchema = new mongoose.Schema({
         type: Number,
         default: 0,
         min: 0,
-        max: 5
+        max: 6
       },
       infused: {
         type: Boolean,
@@ -39,7 +39,7 @@ const characterSchema = new mongoose.Schema({
         type: Number,
         default: 0,
         min: 0,
-        max: 3
+        max: 18
       }
     },
     cloak: {
@@ -47,7 +47,7 @@ const characterSchema = new mongoose.Schema({
         type: Number,
         default: 0,
         min: 0,
-        max: 5
+        max: 6
       },
       infused: {
         type: Boolean,
@@ -57,7 +57,7 @@ const characterSchema = new mongoose.Schema({
         type: Number,
         default: 0,
         min: 0,
-        max: 3
+        max: 18
       }
     },
     belt: {
@@ -65,7 +65,7 @@ const characterSchema = new mongoose.Schema({
         type: Number,
         default: 0,
         min: 0,
-        max: 5
+        max: 6
       },
       infused: {
         type: Boolean,
@@ -75,7 +75,7 @@ const characterSchema = new mongoose.Schema({
         type: Number,
         default: 0,
         min: 0,
-        max: 3
+        max: 18
       }
     }
   },
@@ -89,7 +89,7 @@ const characterSchema = new mongoose.Schema({
       type: Number,
       required: true,
       min: 0,
-      max: 5
+      max: 6
     },
     count: {
       type: Number,

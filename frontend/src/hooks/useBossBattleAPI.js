@@ -77,9 +77,17 @@ export const useBossBattleAPI = (character, navigate, setBattleConfig, setUserDa
   const handleLogout = async () => {
     try {
       await api.post('/auth/logout');
+      localStorage.removeItem('user');
+      // Clear battle config cache
+      battleConfigCache.data = null;
+      battleConfigCache.timestamp = 0;
       navigate('/');
     } catch (error) {
       console.error('Logout failed:', error);
+      localStorage.removeItem('user');
+      // Clear battle config cache
+      battleConfigCache.data = null;
+      battleConfigCache.timestamp = 0;
       navigate('/');
     }
   };

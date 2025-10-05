@@ -9,6 +9,14 @@ export const getUpgradeInfo = (character, equipmentType) => {
   if (currentTier >= maxTier) {
     return {
       canUpgrade: false,
+      currentTier,
+      maxTier,
+      currentInfusionLevel,
+      targetTier: currentTier,
+      totalInfusionsNeeded: 0,
+      requiredResources: {},
+      resourceStatus: {},
+      description: `${equipmentType} at maximum tier`,
       message: `${equipmentType} is already at maximum tier`
     };
   }

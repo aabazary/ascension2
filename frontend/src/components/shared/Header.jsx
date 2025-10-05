@@ -41,40 +41,50 @@ const Header = ({ showDashboard = true, showLogout = false, onLogout, userData, 
           {/* Current tier resources */}
           {selectedCharacter && (
             <>
-              {/* Desktop version */}
-              <div className="hidden md:flex items-center gap-3 px-3 py-2 bg-dark-panel border border-dark-border rounded-lg">
-                <div className="text-xs text-gray-400">T{selectedCharacter.currentTier}:</div>
-                <div className="flex items-center gap-2">
-                  <div className="flex items-center gap-1">
-                    <span className="text-xs">✨</span>
-                    <span className="text-xs text-neon-green font-mono">
-                      {selectedCharacter.resources?.gathering?.[selectedCharacter.currentTier] || 0}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <span className="text-xs">⚔️</span>
-                    <span className="text-xs text-neon-pink font-mono">
-                      {selectedCharacter.resources?.minion?.[selectedCharacter.currentTier] || 0}
-                    </span>
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <span className="text-xs">👑</span>
-                    <span className="text-xs text-neon-yellow font-mono">
-                      {selectedCharacter.resources?.boss?.[selectedCharacter.currentTier] || 0}
-                    </span>
-                  </div>
+              {selectedCharacter.currentTier >= 6 ? (
+                /* Max tier display */
+                <div className="flex items-center gap-2 px-3 py-2 bg-dark-panel border border-yellow-500 rounded-lg">
+                  <div className="text-xs text-yellow-400 font-bold">👑 MAX TIER</div>
+                  <div className="text-xs text-gray-400">Currently Max Tier</div>
                 </div>
-              </div>
-              
-              {/* Mobile version */}
-              <div className="md:hidden flex items-center gap-1 px-2 py-1 bg-dark-panel border border-dark-border rounded text-xs">
-                <span className="text-gray-400">T{selectedCharacter.currentTier}</span>
-                <div className="flex items-center gap-1">
-                  <span className="text-neon-green">✨{selectedCharacter.resources?.gathering?.[selectedCharacter.currentTier] || 0}</span>
-                  <span className="text-neon-pink">⚔️{selectedCharacter.resources?.minion?.[selectedCharacter.currentTier] || 0}</span>
-                  <span className="text-neon-yellow">👑{selectedCharacter.resources?.boss?.[selectedCharacter.currentTier] || 0}</span>
-                </div>
-              </div>
+              ) : (
+                <>
+                  {/* Desktop version */}
+                  <div className="hidden md:flex items-center gap-3 px-3 py-2 bg-dark-panel border border-dark-border rounded-lg">
+                    <div className="text-xs text-gray-400">T{selectedCharacter.currentTier}:</div>
+                    <div className="flex items-center gap-2">
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs">✨</span>
+                        <span className="text-xs text-neon-green font-mono">
+                          {selectedCharacter.resources?.gathering?.[selectedCharacter.currentTier] || 0}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs">⚔️</span>
+                        <span className="text-xs text-neon-pink font-mono">
+                          {selectedCharacter.resources?.minion?.[selectedCharacter.currentTier] || 0}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs">👑</span>
+                        <span className="text-xs text-neon-yellow font-mono">
+                          {selectedCharacter.resources?.boss?.[selectedCharacter.currentTier] || 0}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  {/* Mobile version */}
+                  <div className="md:hidden flex items-center gap-1 px-2 py-1 bg-dark-panel border border-dark-border rounded text-xs">
+                    <span className="text-gray-400">T{selectedCharacter.currentTier}</span>
+                    <div className="flex items-center gap-1">
+                      <span className="text-neon-green">✨{selectedCharacter.resources?.gathering?.[selectedCharacter.currentTier] || 0}</span>
+                      <span className="text-neon-pink">⚔️{selectedCharacter.resources?.minion?.[selectedCharacter.currentTier] || 0}</span>
+                      <span className="text-neon-yellow">👑{selectedCharacter.resources?.boss?.[selectedCharacter.currentTier] || 0}</span>
+                    </div>
+                  </div>
+                </>
+              )}
             </>
           )}
 

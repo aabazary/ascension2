@@ -15,7 +15,7 @@ const activityLogSchema = new mongoose.Schema({
     type: Number,
     required: true,
     min: 0,
-    max: 5
+    max: 6
   },
   success: {
     type: Boolean,
@@ -31,7 +31,7 @@ const activityLogSchema = new mongoose.Schema({
       type: Number,
       required: true,
       min: 0,
-      max: 5
+      max: 6
     },
     amount: {
       type: Number,

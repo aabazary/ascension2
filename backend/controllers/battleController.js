@@ -48,6 +48,17 @@ const initBattle = asyncHandler(async (req, res) => {
     });
   }
   
+  // Special validation for Tier 6 - requires full Tier 6 gear
+  if (tier === 6) {
+    const allTier6 = Object.values(character.equipment).every(equip => equip.tier === 6);
+    if (!allTier6) {
+      return res.status(400).json({
+        success: false,
+        message: 'Tier 6 Master battle requires all equipment to be Tier 6'
+      });
+    }
+  }
+  
   try {
     // Calculate character stats for battle
     const characterHealth = calculateCharacterHealth(character);
@@ -90,10 +101,10 @@ const startMinionBattle = asyncHandler(async (req, res) => {
     });
   }
   
-  if (tier < 0 || tier > 5) {
+  if (tier < 0 || tier > 6) {
     return res.status(400).json({
       success: false,
-      message: 'Invalid tier (0-5)'
+      message: 'Invalid tier (0-6)'
     });
   }
   
@@ -114,6 +125,17 @@ const startMinionBattle = asyncHandler(async (req, res) => {
       success: false,
       message: 'Character tier too low for this battle'
     });
+  }
+  
+  // Special validation for Tier 6 - requires full Tier 6 gear
+  if (tier === 6) {
+    const allTier6 = Object.values(character.equipment).every(equip => equip.tier === 6);
+    if (!allTier6) {
+      return res.status(400).json({
+        success: false,
+        message: 'Tier 6 Master battle requires all equipment to be Tier 6'
+      });
+    }
   }
   
   try {
@@ -243,10 +265,10 @@ const startBossBattle = asyncHandler(async (req, res) => {
     });
   }
   
-  if (tier < 0 || tier > 5) {
+  if (tier < 0 || tier > 6) {
     return res.status(400).json({
       success: false,
-      message: 'Invalid tier (0-5)'
+      message: 'Invalid tier (0-6)'
     });
   }
   
@@ -267,6 +289,17 @@ const startBossBattle = asyncHandler(async (req, res) => {
       success: false,
       message: 'Character tier too low for this battle'
     });
+  }
+  
+  // Special validation for Tier 6 - requires full Tier 6 gear
+  if (tier === 6) {
+    const allTier6 = Object.values(character.equipment).every(equip => equip.tier === 6);
+    if (!allTier6) {
+      return res.status(400).json({
+        success: false,
+        message: 'Tier 6 Master battle requires all equipment to be Tier 6'
+      });
+    }
   }
   
   try {
@@ -291,9 +324,13 @@ const startBossBattle = asyncHandler(async (req, res) => {
       character.stats.totalBattles = (character.stats.totalBattles || 0) + 1;
       character.stats.totalBosses = (character.stats.totalBosses || 0) + 1;
       
-      // Add boss resources based on tier (higher rewards than minions)
-      const resourcesGained = Math.floor(Math.random() * 15) + (tier * 3) + 10;
-      await character.addResource('boss', tier, resourcesGained);
+      // Master boss (Tier 6) doesn't give resources, only tracks kills
+      let resourcesGained = 0;
+      if (tier < 6) {
+        // Add boss resources based on tier (higher rewards than minions)
+        resourcesGained = Math.floor(Math.random() * 15) + (tier * 3) + 10;
+        await character.addResource('boss', tier, resourcesGained);
+      }
       
       // Create activity log entry
       try {
@@ -302,11 +339,11 @@ const startBossBattle = asyncHandler(async (req, res) => {
           activityType: 'boss',
           tier: tier,
           success: true,
-          resourcesGained: [{
+          resourcesGained: tier < 6 ? [{
             type: 'boss',
             tier: tier,
             amount: resourcesGained
-          }],
+          }] : [], // Master boss gives no resources
           equipmentUsed: character.equipment || {},
           battleDetails: {
             battleLog: battleResult.battleLog || [],
@@ -322,7 +359,7 @@ const startBossBattle = asyncHandler(async (req, res) => {
       res.json({
         success: true,
         won: true,
-        message: 'Boss defeated!',
+        message: tier === 6 ? 'Master defeated! No resources at max tier.' : 'Boss defeated!',
         resourcesGained,
         battleStats: {
           characterMaxHealth: characterHealth,

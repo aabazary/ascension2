@@ -29,7 +29,8 @@ const GearDisplay = ({ upgradeStatus, onGearSelect }) => {
       2: 'text-blue-400', 
       3: 'text-purple-400',
       4: 'text-orange-400',
-      5: 'text-red-400'
+      5: 'text-red-400',
+      6: 'text-yellow-400'
     };
     return colors[tier] || 'text-gray-400';
   };
@@ -41,14 +42,15 @@ const GearDisplay = ({ upgradeStatus, onGearSelect }) => {
       2: 'border-blue-500',
       3: 'border-purple-500', 
       4: 'border-orange-500',
-      5: 'border-red-500'
+      5: 'border-red-500',
+      6: 'border-yellow-500'
     };
     return colors[tier] || 'border-gray-600';
   };
 
   const getUpgradeStatus = (gearType) => {
     if (!upgradeStatus || !upgradeStatus[gearType]) {
-      return { canUpgrade: false, currentTier: 0, maxTier: 5, resourceStatus: {} };
+      return { canUpgrade: false, currentTier: 0, maxTier: 6, resourceStatus: {} };
     }
     return upgradeStatus[gearType];
   };
@@ -72,11 +74,12 @@ const GearDisplay = ({ upgradeStatus, onGearSelect }) => {
     const prerequisites = [];
     const currentGearTier = upgradeStatus[gearType]?.currentTier || 0;
     
-    // Check if other equipment needs to be upgraded first
+    // Check if other equipment needs to be upgraded to match this gear's tier
     gearTypes.forEach(otherGear => {
       if (otherGear !== gearType) {
         const otherTier = upgradeStatus[otherGear]?.currentTier || 0;
-        if (otherTier < currentGearTier) {
+        // If this gear is higher tier than others, they need to be upgraded first
+        if (currentGearTier > otherTier) {
           prerequisites.push(otherGear);
         }
       }
@@ -174,7 +177,7 @@ const GearDisplay = ({ upgradeStatus, onGearSelect }) => {
                   </div>
                   <div className="flex justify-between text-sm">
                     <span className="text-gray-400">Next:</span>
-                    <span className={getTierColor(currentTier + 1)}>Tier {currentTier + 1}</span>
+                    <span className={getTierColor(currentTier + 1)}>Tier {isMaxTier ? 'MAX' : currentTier + 1}</span>
                   </div>
                   
                   <div className="mt-3">
@@ -223,7 +226,7 @@ const GearDisplay = ({ upgradeStatus, onGearSelect }) => {
                               {gearNames[prereq]}
                             </span>
                             <span className="text-orange-400">
-                              Tier {upgradeStatus[prereq]?.currentTier || 0} → {currentTier}
+                              Tier {upgradeStatus[prereq]?.currentTier || 0} → {currentGearTier}
                             </span>
                           </div>
                         ))}
@@ -244,15 +247,6 @@ const GearDisplay = ({ upgradeStatus, onGearSelect }) => {
               </div>
             )}
 
-            {/* Max Tier Overlay */}
-            {isMaxTier && (
-              <div className="absolute inset-0 bg-black bg-opacity-30 rounded-lg flex items-center justify-center">
-                <div className="text-center">
-                  <p className="text-white font-semibold">Maximum Tier</p>
-                  <p className="text-gray-300 text-sm">No further upgrades available</p>
-                </div>
-              </div>
-            )}
           </div>
         );
       })}

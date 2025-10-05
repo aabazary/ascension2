@@ -5,6 +5,7 @@ export const UPGRADE_CONFIG = {
     2: 5,    // Tier 2 -> 3: 5 infusions
     3: 8,    // Tier 3 -> 4: 8 infusions
     4: 12,   // Tier 4 -> 5: 12 infusions
+    5: 18,   // Tier 5 -> 6: 18 infusions
   },
   
   equipmentRequirements: {
@@ -27,34 +28,36 @@ export const UPGRADE_CONFIG = {
     1: { gathering: 80, minion: 50, boss: 30 },
     2: { gathering: 120, minion: 80, boss: 50 },
     3: { gathering: 180, minion: 120, boss: 80 },
-    4: { gathering: 250, minion: 180, boss: 120 }
+    4: { gathering: 250, minion: 180, boss: 120 },
+    5: { gathering: 350, minion: 250, boss: 180 }
   },
 
           equipmentBonuses: {
             ring: { 
-              damage: [0, 4, 9, 20, 45, 100],       // Tier 0-5: +0, +4, +9, +20, +45, +100 power per tier
-              health: [0, 20, 45, 100, 225, 500]    // Tier 0-5: +0, +20, +45, +100, +225, +500 health per tier
+              damage: [0, 4, 9, 20, 45, 100, 225],       
+              health: [0, 20, 45, 100, 225, 500, 1125]   
             },
             cloak: { 
-              damage: [0, 4, 9, 20, 45, 100],       // Tier 0-5: +0, +4, +9, +20, +45, +100 power per tier
-              health: [0, 20, 45, 100, 225, 500]    // Tier 0-5: +0, +20, +45, +100, +225, +500 health per tier
+              damage: [0, 4, 9, 20, 45, 100, 225],      
+              health: [0, 20, 45, 100, 225, 500, 1125]  
             },
             belt: { 
-              damage: [0, 4, 9, 20, 45, 100],       // Tier 0-5: +0, +4, +9, +20, +45, +100 power per tier
-              health: [0, 20, 45, 100, 225, 500]    // Tier 0-5: +0, +20, +45, +100, +225, +500 health per tier
+              damage: [0, 4, 9, 20, 45, 100, 225],      
+              health: [0, 20, 45, 100, 225, 500, 1125]  
             }
           },
           
           // Set bonuses for having all 3 pieces at each tier level
           setBonuses: [
-            { damage: 0, health: 0 },       // Tier 0: no set bonus
-            { damage: 20, health: 100 },    // Tier 1: +20 power, +100 health
-            { damage: 45, health: 225 },    // Tier 2: +45 power, +225 health
-            { damage: 100, health: 500 },   // Tier 3: +100 power, +500 health
-            { damage: 225, health: 1125 },  // Tier 4: +225 power, +1125 health
-            { damage: 500, health: 2500 }   // Tier 5: +500 power, +2500 health
+            { damage: 0, health: 0 },       
+            { damage: 20, health: 100 },    
+            { damage: 45, health: 225 },    
+            { damage: 100, health: 500 },   
+            { damage: 225, health: 1125 },  
+            { damage: 500, health: 2500 },  
+            { damage: 2500, health: 15000 }  
           ],
   
-  maxTier: 5,
+  maxTier: 6,
   validEquipmentTypes: ['ring', 'cloak', 'belt']
 };
