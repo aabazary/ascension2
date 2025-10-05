@@ -6,7 +6,7 @@ export const BATTLE_CONFIG = {
       minionName: 'Earth Dragonling',
       minionImage: '/dragonling/earth__dragonling.png',
       bossHealth: 200,
-      bossDamage: 50,
+      bossDamage: 40,
       bossName: 'Mountain Wyrm',
       bossImage: '/dragons/mountain_wyrm.png'
     },

@@ -1,8 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import api from '../utils/api';
 import { updateCharacterCache, updateCharacterCacheFull } from '../utils/cacheUtils';
+import { useCharacter } from '../contexts/CharacterContext';
 
 export const useUpgrade = (character) => {
+  const { updateCharacter } = useCharacter();
   const [upgradeStatus, setUpgradeStatus] = useState(null);
   const [selectedGear, setSelectedGear] = useState(null);
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
@@ -32,6 +34,11 @@ export const useUpgrade = (character) => {
         // Update character cache with fresh data
         const updatedCharacter = response.data.character;
         updateCharacterCacheFull(updatedCharacter);
+        
+        // Update character context if available
+        if (updateCharacter) {
+          updateCharacter(updatedCharacter);
+        }
       }
     } catch (err) {
       console.error('Failed to fetch upgrade status:', err);
@@ -102,6 +109,11 @@ export const useUpgrade = (character) => {
         // Update character cache with the updated character data
         if (character) {
           updateCharacterCacheFull(character);
+          
+          // Update character context if available
+          if (updateCharacter) {
+            updateCharacter(character);
+          }
         }
         
         // Refresh upgrade status to get updated upgrade info

@@ -226,7 +226,7 @@ const GearDisplay = ({ upgradeStatus, onGearSelect }) => {
                               {gearNames[prereq]}
                             </span>
                             <span className="text-orange-400">
-                              Tier {upgradeStatus[prereq]?.currentTier || 0} → {currentGearTier}
+                              Tier {upgradeStatus[prereq]?.currentTier || 0} → {currentTier}
                             </span>
                           </div>
                         ))}

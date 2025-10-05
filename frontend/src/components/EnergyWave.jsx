@@ -90,11 +90,11 @@ const EnergyWave = ({ element, position, direction, isActive, projectileId = 0 }
       <img 
         src={getSpellImage(element)}
         alt={`${element} Spell`}
-        className="w-[500px] h-[500px] object-contain relative z-10"
+        className="w-16 h-16 object-contain relative z-10"
         style={{
           transform: `${shouldFlip ? 'scaleX(-1)' : 'scaleX(1)'} scale(${scale * sizeVariation})`,
           opacity: opacity,
-          filter: `brightness(1.4) saturate(1.8) drop-shadow(0 0 45px ${colors.glow})`,
+          filter: `brightness(1.4) saturate(1.8) drop-shadow(0 0 20px ${colors.glow})`,
           transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
         }}
       />
