@@ -14,6 +14,7 @@ export const useBattleActions = (
   setPlayerHealth,
   setEnemyHealth,
   maxEnemyHealth,
+  setMaxPlayerHealth,
   setSpells,
   setCombatLog,
   setLogId,
@@ -27,6 +28,8 @@ export const useBattleActions = (
   setIsPlayerTurn,
   addCombatLog,
   submitBattleResult,
+  initBattle,
+  combatLog,
   isBossBattle = false
 ) => {
   // Start battle
@@ -36,38 +39,71 @@ export const useBattleActions = (
     setIsBattleStarted(true);
     setGameEnded(false);
     setBattleResult(null);
-    setPlayerHealth(100);
+    
+    // Get calculated health and power from battle init API
+    let characterPower = 20; // Default base power
+    try {
+      const initResult = await initBattle(character, selectedTier, isBossBattle);
+      
+      if (initResult.success && initResult.battleStats) {
+        setPlayerHealth(initResult.battleStats.characterMaxHealth);
+        setMaxPlayerHealth(initResult.battleStats.characterMaxHealth);
+        characterPower = initResult.battleStats.characterPower;
+      } else {
+        setPlayerHealth(100); // Fallback
+      }
+    } catch (error) {
+      console.error('Failed to initialize battle:', error);
+      setPlayerHealth(100); // Fallback
+    }
+    
     setEnemyHealth(isBossBattle ? (battleConfig?.tiers[selectedTier]?.bossHealth || 150) : maxEnemyHealth);
     setCombatLog([]);
     setLogId(0);
     
-    // Initialize spells
+    // Initialize spells with calculated power
     const tierConfig = battleConfig?.tiers[selectedTier];
-    if (tierConfig) {
+    if (tierConfig && battleConfig.spells) {
+      // Get spell configs from battleConfig
+      const blastConfig = battleConfig.spells.blast;
+      const novaConfig = battleConfig.spells.nova;
+      const boltConfig = battleConfig.spells.bolt;
+      
+      // Calculate total damages (base damage + compensated power bonus)
+      const totalBlastDamage = Math.round(blastConfig.baseDamage + (characterPower * blastConfig.compensationFactor));
+      const totalNovaDamage = Math.round(novaConfig.baseDamage + (characterPower * novaConfig.compensationFactor));
+      const totalBoltDamage = Math.round(boltConfig.baseDamage + (characterPower * boltConfig.compensationFactor));
+      
       const newSpells = [
         {
-          name: 'Blast',
-          emoji: '💥',
-          hitChance: 0.3,
-          damage: 25,
-          critChance: 1.0,
-          description: 'A powerful energy blast'
+          name: blastConfig.name,
+          emoji: blastConfig.emoji,
+          hitChance: blastConfig.hitChance,
+          damage: totalBlastDamage,
+          baseDamage: blastConfig.baseDamage,
+          powerBonus: Math.round(characterPower * blastConfig.compensationFactor),
+          critChance: blastConfig.critChance,
+          description: blastConfig.description
         },
         {
-          name: 'Nova',
-          emoji: '🌟',
-          hitChance: 0.5,
-          damage: 35,
-          critChance: 0.3,
-          description: 'A devastating nova explosion'
+          name: novaConfig.name,
+          emoji: novaConfig.emoji,
+          hitChance: novaConfig.hitChance,
+          damage: totalNovaDamage,
+          baseDamage: novaConfig.baseDamage,
+          powerBonus: Math.round(characterPower * novaConfig.compensationFactor),
+          critChance: novaConfig.critChance,
+          description: novaConfig.description
         },
         {
-          name: 'Bolt',
-          emoji: '⚡',
-          hitChance: 0.6,
-          damage: 20,
-          critChance: 0.0,
-          description: 'A quick lightning bolt'
+          name: boltConfig.name,
+          emoji: boltConfig.emoji,
+          hitChance: boltConfig.hitChance,
+          damage: totalBoltDamage,
+          baseDamage: boltConfig.baseDamage,
+          powerBonus: Math.round(characterPower * boltConfig.compensationFactor),
+          critChance: boltConfig.critChance,
+          description: boltConfig.description
         }
       ];
       setSpells(newSpells);
@@ -185,6 +221,44 @@ export const useBattleActions = (
     }, 3000);
   };
 
+  // Helper function to check if player is undergeared for vulnerable strikes
+  const getUndergearedLevel = () => {
+    if (!character?.equipment) return 2; // Missing all equipment
+    
+    const battleTier = selectedTier;
+    const requiredTier = battleTier + 1; // Need pieces one tier higher
+    
+    let higherTierItems = 0;
+    
+    // Count how many pieces are one tier higher
+    Object.values(character.equipment).forEach(equip => {
+      if (equip.infused && equip.tier >= requiredTier) {
+        higherTierItems++;
+      }
+    });
+    
+    // For minions: need at least 1 higher tier piece
+    // For bosses: need at least 2 higher tier pieces
+    const requiredHigherTierPieces = isBossBattle ? 2 : 1;
+    
+    console.log('Vulnerable strike check:', {
+      battleTier,
+      requiredTier,
+      higherTierItems,
+      requiredHigherTierPieces,
+      isBossBattle,
+      equipment: character.equipment
+    });
+    
+    if (higherTierItems >= requiredHigherTierPieces) {
+      console.log('Not vulnerable - has enough higher tier pieces');
+      return 0; // Not vulnerable
+    }
+    
+    console.log('Vulnerable - insufficient higher tier pieces');
+    return 1; // Vulnerable to strikes
+  };
+
   // Enemy turn
   const enemyTurn = async () => {
     // Create multiple enemy projectiles and animate them
@@ -232,26 +306,83 @@ export const useBattleActions = (
       setTimeout(() => {
         const tierConfig = battleConfig?.tiers[selectedTier];
         if (tierConfig) {
-          const damage = isBossBattle ? tierConfig.bossDamage : tierConfig.minionDamage;
-          setPlayerHealth(prev => {
-            const newHealth = Math.max(0, prev - damage);
-            return newHealth;
-          });
+          const baseDamage = isBossBattle ? tierConfig.bossDamage : tierConfig.minionDamage;
+          const missingTierItems = getUndergearedLevel();
+          const isVulnerable = missingTierItems > 0;
           
-          setDamageText({ text: damage.toString(), isPlayer: true, isCrit: false });
-          addCombatLog(`Enemy deals ${damage} damage!`, 'damage');
+          // Calculate hit/miss (20% base miss chance, but 0% if player is vulnerable)
+          const missRoll = Math.random();
+          const hit = isVulnerable ? true : (missRoll >= 0.2);
+          
+          if (hit) {
+            // Calculate crit (20% of hits are crits)
+            const critRoll = Math.random();
+            const isCrit = critRoll < 0.2;
+            
+            // Calculate vulnerable strike chance (50% if undergeared)
+            const vulnerableRoll = Math.random();
+            const isVulnerableStrike = isVulnerable && vulnerableRoll < 0.5;
+            
+            console.log('Vulnerable strike calculation:', {
+              missingTierItems,
+              vulnerableRoll,
+              isVulnerable,
+              isVulnerableStrike,
+              vulnerableChance: missingTierItems > 0 ? 0.5 : 0
+            });
+            
+            let finalDamage = baseDamage;
+            let damageMultiplier = 1;
+            
+            if (isCrit) {
+              damageMultiplier *= 2;
+            }
+            
+            if (isVulnerableStrike) {
+              // Minions: 3x damage, Bosses: 4x damage
+              damageMultiplier *= (isBossBattle ? 4 : 3);
+            }
+            
+            finalDamage = Math.floor(baseDamage * damageMultiplier);
+            
+            setPlayerHealth(prev => {
+              const newHealth = Math.max(0, prev - finalDamage);
+              return newHealth;
+            });
+            
+            // Set damage text and combat log
+            let damageText = finalDamage.toString();
+            let logMessage = `Enemy deals ${finalDamage} damage!`;
+            
+            if (isVulnerableStrike) {
+              damageText = `VULNERABLE STRIKE! ${finalDamage}`;
+              logMessage = `VULNERABLE STRIKE! Enemy deals ${finalDamage} damage!`;
+            } else if (isCrit) {
+              damageText = `CRITICAL! ${finalDamage}`;
+              logMessage = `CRITICAL HIT! Enemy deals ${finalDamage} damage!`;
+            }
+            
+            setDamageText({ 
+              text: damageText, 
+              isPlayer: true, 
+              isCrit: isCrit || isVulnerableStrike,
+              isVulnerable: isVulnerableStrike
+            });
+            addCombatLog(logMessage, isVulnerableStrike ? 'vulnerable' : (isCrit ? 'crit' : 'damage'));
+            
+            // Check if player is defeated after damage
+            if (playerHealth - finalDamage <= 0) {
+              setTimeout(() => endBattle(false), 100);
+            }
+          } else {
+            // Miss
+            setDamageText({ text: 'MISS', isPlayer: true, isCrit: false });
+            addCombatLog('Enemy attack misses!', 'miss');
+          }
         }
         
         // Deactivate projectiles after damage is applied
         setEnemyProjectiles([]);
-        
-        // Check if player is defeated after damage
-        if (tierConfig) {
-          const damage = isBossBattle ? tierConfig.bossDamage : tierConfig.minionDamage;
-          if (playerHealth - damage <= 0) {
-            setTimeout(() => endBattle(false), 100);
-          }
-        }
       }, 1000);
     };
     
@@ -278,17 +409,28 @@ export const useBattleActions = (
     setPlayerProjectiles([]);
     setEnemyProjectiles([]);
     
-    const result = await submitBattleResult(character._id, selectedTier, {
-      won,
-      playerHealth,
-      enemyHealth
-    });
+    const result = await submitBattleResult(
+      isBossBattle ? character._id : character, 
+      selectedTier, 
+      {
+        won,
+        playerHealth,
+        enemyHealth,
+        battleLog: combatLog // Include the combat log in the battle result
+      }
+    );
     
     setBattleResult(result);
     
     // Update character cache with new resources if won
     if (result.won && result.resourcesGained > 0) {
       updateCharacterCache(character._id, isBossBattle ? 'boss' : 'minion', selectedTier, result.resourcesGained);
+    }
+    
+    // Update health values from battle stats if available
+    if (result.battleStats) {
+      setPlayerHealth(result.battleStats.characterCurrentHealth);
+      setMaxPlayerHealth(result.battleStats.characterMaxHealth);
     }
   };
 
@@ -298,6 +440,7 @@ export const useBattleActions = (
     setGameEnded(false);
     setBattleResult(null);
     setPlayerHealth(100);
+    setMaxPlayerHealth(100);
     setEnemyHealth(isBossBattle ? (battleConfig?.tiers[selectedTier]?.bossHealth || 150) : maxEnemyHealth);
     setSpells([]); // Will be re-initialized by startBattle
     setCombatLog([]);

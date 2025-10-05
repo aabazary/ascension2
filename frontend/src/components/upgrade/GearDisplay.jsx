@@ -19,10 +19,7 @@ const GearDisplay = ({ upgradeStatus, onGearSelect }) => {
     };
     
     const gearName = imageMap[gearType];
-    const imagePath = `/armor/${gearName}/tier${tier}_${gearName}.png`;
-    
-    console.log(`getGearImage(${gearType}, ${tier}) -> ${imagePath}`);
-    return imagePath;
+    return `/armor/${gearName}/tier${tier}_${gearName}.png`;
   };
 
   const getTierColor = (tier) => {
@@ -126,21 +123,14 @@ const GearDisplay = ({ upgradeStatus, onGearSelect }) => {
           >
             {/* Gear Image */}
             <div className="flex justify-center mb-4">
-              {(() => {
-                const imageSrc = getGearImage(gearType, currentTier);
-                console.log(`Loading image for ${gearType} tier ${currentTier}:`, imageSrc);
-                return (
-                  <img
-                    src={imageSrc}
-                    alt={`${gearNames[gearType]} Tier ${currentTier}`}
-                    className="w-24 h-24 object-contain"
-                    onError={(e) => {
-                      console.log('Image failed to load:', e.target.src);
-                      e.target.src = '/armor/ring/tier0_ring.png'; // Fallback image
-                    }}
-                  />
-                );
-              })()}
+              <img
+                src={getGearImage(gearType, currentTier)}
+                alt={`${gearNames[gearType]} Tier ${currentTier}`}
+                className="w-24 h-24 object-contain"
+                onError={(e) => {
+                  e.target.src = '/armor/ring/tier0_ring.png'; // Fallback image
+                }}
+              />
             </div>
 
             {/* Gear Info */}
@@ -151,6 +141,24 @@ const GearDisplay = ({ upgradeStatus, onGearSelect }) => {
               <p className={`text-lg font-semibold mb-2 ${getTierColor(currentTier)}`}>
                 Tier {currentTier}
               </p>
+              
+              {/* Infusion Progress Bar */}
+              {!isMaxTier && status.currentInfusionLevel !== undefined && (
+                <div className="mb-3">
+                  <div className="flex justify-between text-xs text-gray-400 mb-1">
+                    <span>Infusion Progress</span>
+                    <span>{status.currentInfusionLevel}/{status.totalInfusionsNeeded}</span>
+                  </div>
+                  <div className="w-full bg-gray-700 rounded-full h-2">
+                    <div 
+                      className="bg-neon-green h-2 rounded-full transition-all duration-300"
+                      style={{ 
+                        width: `${(status.currentInfusionLevel / status.totalInfusionsNeeded) * 100}%` 
+                      }}
+                    ></div>
+                  </div>
+                </div>
+              )}
               
               {isMaxTier ? (
                 <div className="text-center">

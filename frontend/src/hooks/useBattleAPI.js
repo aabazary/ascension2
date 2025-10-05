@@ -78,6 +78,20 @@ export const useBattleAPI = (character, navigate, setBattleConfig, setUserData) 
     }
   };
 
+  const initBattle = async (character, selectedTier, isBossBattle = false) => {
+    try {
+      const response = await api.post('/battle/init', {
+        characterId: character._id,
+        tier: selectedTier,
+        isBossBattle
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Failed to initialize battle:', error);
+      throw error;
+    }
+  };
+
   const submitBattleResult = async (character, selectedTier, battleResult) => {
     try {
       const response = await api.post('/battle/minion/start', {
@@ -101,6 +115,7 @@ export const useBattleAPI = (character, navigate, setBattleConfig, setUserData) 
     handleLogout,
     handleProfileUpdated,
     fetchBattleConfig,
+    initBattle,
     submitBattleResult
   };
 };

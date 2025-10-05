@@ -18,7 +18,7 @@ const ActivityButtons = ({ character }) => {
           className="arcade-panel p-8 text-center hover:scale-105 transition-transform group"
         >
           <div className="text-6xl mb-4 group-hover:animate-bounce">✨</div>
-          <h3 className="font-arcade text-2xl text-neon-green mb-4">GATHERING</h3>
+          <h3 className="font-arcade text-2xl text-neon-green mb-4">GATHER</h3>
           <p className="text-gray-400 text-sm mb-4">
             Collect essence from dragon eggs. Test your reflexes and timing!
           </p>

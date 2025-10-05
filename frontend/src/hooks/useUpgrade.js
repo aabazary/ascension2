@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import api from '../utils/api';
-import { updateCharacterCache } from '../utils/cacheUtils';
+import { updateCharacterCache, updateCharacterCacheFull } from '../utils/cacheUtils';
 
 export const useUpgrade = (character) => {
   const [upgradeStatus, setUpgradeStatus] = useState(null);
@@ -8,9 +8,17 @@ export const useUpgrade = (character) => {
   const [isUpgradeModalOpen, setIsUpgradeModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [lastRefreshTime, setLastRefreshTime] = useState(0);
 
-  const refreshUpgradeStatus = async () => {
+  const refreshUpgradeStatus = useCallback(async () => {
     if (!character?._id) return;
+
+    // Debounce: prevent calls within 1 second of each other
+    const now = Date.now();
+    if (now - lastRefreshTime < 1000) {
+      return;
+    }
+    setLastRefreshTime(now);
 
     try {
       setLoading(true);
@@ -23,15 +31,19 @@ export const useUpgrade = (character) => {
         
         // Update character cache with fresh data
         const updatedCharacter = response.data.character;
-        updateCharacterCache(updatedCharacter);
+        updateCharacterCacheFull(updatedCharacter);
       }
     } catch (err) {
       console.error('Failed to fetch upgrade status:', err);
-      setError(err.response?.data?.message || 'Failed to load upgrade information');
+      if (err.response?.status === 429) {
+        setError('Too many requests. Please wait a moment and try again.');
+      } else {
+        setError(err.response?.data?.message || 'Failed to load upgrade information');
+      }
     } finally {
       setLoading(false);
     }
-  };
+  }, [character?._id, lastRefreshTime]);
 
   const getGearUpgradeInfo = async (equipmentType) => {
     if (!character?._id) return null;
@@ -85,9 +97,14 @@ export const useUpgrade = (character) => {
       });
       
       if (response.data.success) {
-        const { upgrade, tierUnlock } = response.data;
+        const { upgrade, tierUnlock, character } = response.data;
         
-        // Refresh upgrade status to get updated data
+        // Update character cache with the updated character data
+        if (character) {
+          updateCharacterCacheFull(character);
+        }
+        
+        // Refresh upgrade status to get updated upgrade info
         await refreshUpgradeStatus();
         
         // Close modal

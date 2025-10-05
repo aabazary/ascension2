@@ -89,6 +89,20 @@ export const useBossBattleAPI = (character, navigate, setBattleConfig, setUserDa
     setUserData(updatedUserData);
   };
 
+  const initBattle = async (character, selectedTier, isBossBattle = true) => {
+    try {
+      const response = await api.post('/battle/init', {
+        characterId: character._id,
+        tier: selectedTier,
+        isBossBattle
+      });
+      return response.data;
+    } catch (error) {
+      console.error('Failed to initialize boss battle:', error);
+      throw error;
+    }
+  };
+
   const submitBattleResult = async (characterId, tier, battleResult) => {
     try {
       const response = await api.post('/battle/boss/start', {
@@ -113,6 +127,7 @@ export const useBossBattleAPI = (character, navigate, setBattleConfig, setUserDa
     handleLogout,
     handleProfileUpdated,
     fetchBattleConfig,
+    initBattle,
     submitBattleResult,
     userData
   };

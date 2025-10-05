@@ -17,7 +17,8 @@ const CombatLog = ({ combatLog, isBattleStarted }) => {
               <div 
                 key={entry.id} 
                 className={`text-xs ${
-                  entry.type === 'crit' ? 'text-yellow-400 font-bold' :
+                  entry.type === 'vulnerable' ? 'text-yellow-400 font-bold animate-pulse' :
+                  entry.type === 'crit' ? 'text-orange-400 font-bold' :
                   entry.type === 'damage' ? 'text-red-400' :
                   entry.type === 'miss' ? 'text-gray-400' :
                   entry.type === 'action' ? 'text-blue-400' :

@@ -57,6 +57,24 @@ const activityLogSchema = new mongoose.Schema({
     }
   },
   battleDetails: {
+    battleLog: [{
+      turn: Number,
+      spellType: String,
+      spellResult: {
+        hit: Boolean,
+        damage: Number,
+        critical: Boolean
+      },
+      tierLevel: Number
+    }],
+    finalEnemyHealth: {
+      type: Number,
+      default: 0
+    },
+    finalCharacterHealth: {
+      type: Number,
+      default: 0
+    },
     spellsUsed: [{
       type: String,
       enum: ['blast', 'nova', 'bolt']

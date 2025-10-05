@@ -17,6 +17,11 @@ const Header = ({ showDashboard = true, showLogout = false, onLogout, userData, 
     return getAvatarImage(userData.profilePicture);
   };
 
+  const handleImageError = (e) => {
+    // Fallback to default avatar if Google image fails to load (rate limiting)
+    e.target.src = '/mages/earth_mage.png';
+  };
+
   return (
     <>
       <header className="p-3 sm:p-6 flex justify-between items-center border-b-2 border-dark-border">
@@ -88,6 +93,7 @@ const Header = ({ showDashboard = true, showLogout = false, onLogout, userData, 
                   src={getProfileImageSrc()}
                   alt="Profile"
                   className="w-8 h-8 sm:w-10 sm:h-10 rounded-full object-cover border-2 border-dark-border hover:border-neon-green transition-colors"
+                  onError={handleImageError}
                 />
                 <div className="absolute inset-0 rounded-full bg-black bg-opacity-0 group-hover:bg-opacity-20 transition-all flex items-center justify-center">
                   <span className="text-xs text-white opacity-0 group-hover:opacity-100 transition-opacity">✏️</span>

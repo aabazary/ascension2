@@ -9,18 +9,18 @@ export const TIER_THEMES = {
     egg: '🪨',
   },
   1: {
-    name: 'Water',
-    color: 'from-blue-500 to-cyan-600',
-    borderColor: 'border-blue-500',
-    glow: 'shadow-blue-500/50',
-    egg: '💧',
-  },
-  2: {
     name: 'Fire',
     color: 'from-red-500 to-orange-600',
     borderColor: 'border-red-500',
     glow: 'shadow-red-500/50',
     egg: '🔥',
+  },
+  2: {
+    name: 'Water',
+    color: 'from-blue-500 to-cyan-600',
+    borderColor: 'border-blue-500',
+    glow: 'shadow-blue-500/50',
+    egg: '💧',
   },
   3: {
     name: 'Lightning',

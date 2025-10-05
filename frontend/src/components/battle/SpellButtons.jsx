@@ -12,13 +12,13 @@ const SpellButtons = ({ spells, onCastSpell }) => {
             key={index}
             onClick={() => onCastSpell(spell)}
             className="group relative p-4 bg-dark-bg border border-dark-border rounded-lg hover:border-neon-purple transition-all"
-            title={`${spell.description}\nHit: ${(spell.hitChance * 100).toFixed(0)}% | Damage: ${spell.damage} | Crit: ${(spell.critChance * 100).toFixed(0)}%`}
+            title={`${spell.description}\nDamage: ${spell.damage} | Hit: ${(spell.hitChance * 100).toFixed(0)}% | Crit: ${(spell.critChance * 100).toFixed(0)}%`}
           >
             <div className="text-3xl mb-2">{spell.emoji}</div>
             <div className="font-arcade text-sm text-white mb-1">{spell.name}</div>
             <div className="text-xs text-gray-400">
+              <div className="text-white font-semibold mb-1">Damage: {spell.damage}</div>
               <div>Hit: {(spell.hitChance * 100).toFixed(0)}%</div>
-              <div>Dmg: {spell.damage}</div>
               <div>Crit: {(spell.critChance * 100).toFixed(0)}%</div>
             </div>
           </button>

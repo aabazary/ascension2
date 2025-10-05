@@ -30,7 +30,10 @@ const BattleField = ({
             className="w-24 h-24 xs:w-28 xs:h-28 sm:w-48 sm:h-48 md:w-64 md:h-64 lg:w-80 lg:h-80 mx-auto object-contain"
           />
           {damageText && damageText.isPlayer && (
-            <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-4 sm:-translate-y-6 md:-translate-y-8 animate-bounce text-red-500 font-arcade text-lg sm:text-xl md:text-2xl">
+            <div className={`absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-4 sm:-translate-y-6 md:-translate-y-8 animate-bounce font-arcade text-lg sm:text-xl md:text-2xl ${
+              damageText.isVulnerable ? 'text-yellow-400' : 
+              damageText.isCrit ? 'text-orange-400' : 'text-red-500'
+            }`}>
               {damageText.text}
             </div>
           )}

@@ -7,6 +7,9 @@ const router = express.Router();
 // Get battle configuration
 router.get('/config', battleController.getBattleConfig);
 
+// Initialize battle - get calculated stats
+router.post('/init', auth, battleController.initBattle);
+
 // Start minion battle
 router.post('/minion/start', auth, battleController.startMinionBattle);
 

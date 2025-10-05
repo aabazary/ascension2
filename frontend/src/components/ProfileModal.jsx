@@ -115,6 +115,7 @@ const ProfileModal = ({ isOpen, onClose, userData, onProfileUpdated }) => {
                       src={formData.profilePicture}
                       alt="Google Profile"
                       className="w-12 h-12 rounded-full object-cover border-2 border-neon-green"
+                      onError={(e) => e.target.src = '/mages/earth_mage.png'}
                     />
                   ) : (
                     <img
@@ -150,6 +151,7 @@ const ProfileModal = ({ isOpen, onClose, userData, onProfileUpdated }) => {
                     src={userData.originalGoogleProfilePicture}
                     alt="Google Profile"
                     className="w-8 h-8 rounded-full object-cover"
+                    onError={(e) => e.target.src = '/mages/earth_mage.png'}
                   />
                   <span className="text-sm text-gray-300">Use Google Profile Image</span>
                 </button>

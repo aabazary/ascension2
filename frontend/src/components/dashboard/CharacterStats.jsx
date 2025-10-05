@@ -60,25 +60,17 @@ const CharacterStats = ({ character }) => {
           <h4 className="text-neon-yellow font-medium mb-2">Equipment</h4>
           <div className="space-y-2">
             <div className="flex justify-between items-center">
-              <span className="text-gray-400">Ring Tier:</span>
-              <span className="font-arcade text-yellow-400">T{character.equipment?.ring?.tier || 0}</span>
+              <span className="text-gray-400">Belt Tier:</span>
+              <span className="font-arcade text-orange-400">T{character.equipment?.belt?.tier || 0}</span>
             </div>
             <div className="flex justify-between items-center">
               <span className="text-gray-400">Cloak Tier:</span>
               <span className="font-arcade text-purple-400">T{character.equipment?.cloak?.tier || 0}</span>
             </div>
             <div className="flex justify-between items-center">
-              <span className="text-gray-400">Ring Infused:</span>
-              <span className="font-arcade text-green-400">
-                {character.equipment?.ring?.infused ? 'YES' : 'NO'}
-              </span>
+              <span className="text-gray-400">Ring Tier:</span>
+              <span className="font-arcade text-yellow-400">T{character.equipment?.ring?.tier || 0}</span>
             </div>
-            {character.equipment?.ring?.infused && (
-              <div className="flex justify-between items-center">
-                <span className="text-gray-400">Infusion Level:</span>
-                <span className="font-arcade text-blue-400">+{character.equipment?.ring?.infusionLevel || 0}</span>
-              </div>
-            )}
           </div>
         </div>
       </div>

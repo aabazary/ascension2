@@ -6,6 +6,99 @@ import Header from '../components/shared/Header';
 import GearDisplay from '../components/upgrade/GearDisplay';
 import UpgradeModal from '../components/upgrade/UpgradeModal';
 
+// Helper functions to calculate bonuses (matching backend logic)
+const calculateTotalPowerBonus = (character) => {
+  if (!character?.equipment) return 0;
+  
+  let powerBonus = 0;
+  let minTier = 999;
+  let tier1Items = 0;
+
+  Object.entries(character.equipment).forEach(([item, stats]) => {
+    if (stats.infused) {
+      // Equipment bonuses from config
+      const equipmentBonuses = {
+        ring: { damage: [0, 4, 9, 20, 45, 100] },
+        cloak: { damage: [0, 4, 9, 20, 45, 100] },
+        belt: { damage: [0, 4, 9, 20, 45, 100] }
+      };
+      
+      const bonus = equipmentBonuses[item];
+      if (bonus) {
+        const tierIndex = Math.min(stats.tier, bonus.damage.length - 1);
+        powerBonus += bonus.damage[tierIndex];
+      }
+      
+      if (stats.tier >= 1) {
+        tier1Items++;
+        minTier = Math.min(minTier, stats.tier);
+      }
+    }
+  });
+
+  // Set bonus
+  const setBonuses = [
+    { damage: 0, health: 0 },       // Tier 0: no set bonus
+    { damage: 20, health: 100 },    // Tier 1: +20 power, +100 health
+    { damage: 45, health: 225 },    // Tier 2: +45 power, +225 health
+    { damage: 100, health: 500 },   // Tier 3: +100 power, +500 health
+    { damage: 225, health: 1125 },  // Tier 4: +225 power, +1125 health
+    { damage: 500, health: 2500 }   // Tier 5: +500 power, +2500 health
+  ];
+
+  if (tier1Items >= 3 && minTier < setBonuses.length) {
+    powerBonus += setBonuses[minTier].damage;
+  }
+
+  return powerBonus;
+};
+
+const calculateTotalHealthBonus = (character) => {
+  if (!character?.equipment) return 0;
+  
+  let healthBonus = 0;
+  let minTier = 999;
+  let tier1Items = 0;
+
+  Object.entries(character.equipment).forEach(([item, stats]) => {
+    if (stats.infused) {
+      // Equipment bonuses from config
+      const equipmentBonuses = {
+        ring: { health: [0, 20, 45, 100, 225, 500] },
+        cloak: { health: [0, 20, 45, 100, 225, 500] },
+        belt: { health: [0, 20, 45, 100, 225, 500] }
+      };
+      
+      const bonus = equipmentBonuses[item];
+      if (bonus) {
+        const tierIndex = Math.min(stats.tier, bonus.health.length - 1);
+        healthBonus += bonus.health[tierIndex];
+      }
+      
+      if (stats.tier >= 1) {
+        tier1Items++;
+        minTier = Math.min(minTier, stats.tier);
+      }
+    }
+  });
+
+  // Set bonus
+  const setBonuses = [
+    { damage: 0, health: 0 },       // Tier 0: no set bonus
+    { damage: 20, health: 100 },    // Tier 1: +20 power, +100 health
+    { damage: 45, health: 225 },    // Tier 2: +45 power, +225 health
+    { damage: 100, health: 500 },   // Tier 3: +100 power, +500 health
+    { damage: 225, health: 1125 },  // Tier 4: +225 power, +1125 health
+    { damage: 500, health: 2500 }   // Tier 5: +500 power, +2500 health
+  ];
+
+  if (tier1Items >= 3 && minTier < setBonuses.length) {
+    healthBonus += setBonuses[minTier].health;
+  }
+
+  return healthBonus;
+};
+
 const UpgradeStore = ({ userData, onProfileUpdated }) => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -30,7 +123,7 @@ const UpgradeStore = ({ userData, onProfileUpdated }) => {
     }
     
     refreshUpgradeStatus();
-  }, [character, navigate]);
+  }, [character, navigate, refreshUpgradeStatus]);
 
   if (!character) {
     return null;
@@ -64,8 +157,8 @@ const UpgradeStore = ({ userData, onProfileUpdated }) => {
               <div className="text-right">
                 <p className="text-sm text-gray-400">Equipment Bonuses</p>
                 <div className="flex gap-4 text-sm">
-                  <span className="text-green-400">+{character.equipment?.ring?.tier * 4 || 0} Power</span>
-                  <span className="text-blue-400">+{character.equipment?.ring?.tier * 20 || 0} Health</span>
+                  <span className="text-green-400">+{calculateTotalPowerBonus(character)} Power</span>
+                  <span className="text-blue-400">+{calculateTotalHealthBonus(character)} Health</span>
                 </div>
               </div>
             </div>

@@ -29,6 +29,7 @@ export const useBattle = () => {
     state.setPlayerHealth,
     state.setEnemyHealth,
     state.maxEnemyHealth,
+    state.setMaxPlayerHealth,
     state.setSpells,
     state.setCombatLog,
     state.setLogId,
@@ -41,7 +42,9 @@ export const useBattle = () => {
     state.setEnemyProjectiles,
     state.setIsPlayerTurn,
     state.addCombatLog,
-    api.submitBattleResult
+    api.submitBattleResult,
+    api.initBattle,
+    state.combatLog
   );
 
   return {

@@ -75,10 +75,14 @@ const upgradeEquipment = asyncHandler(async (req, res) => {
     const upgradeResult = await performUpgrade(character, equipmentType);
     const tierCheck = await checkTierUnlock(character);
     
+    // Use the character's toJSON method to get properly formatted data
+    const characterData = character.toJSON();
+
     res.json({
       success: true,
       upgrade: upgradeResult,
-      tierUnlock: tierCheck
+      tierUnlock: tierCheck,
+      character: characterData
     });
   } catch (error) {
     const statusCode = error.message === 'Character not found' ? 404 : 400;
@@ -110,21 +114,12 @@ const getCharacterUpgradeStatus = asyncHandler(async (req, res) => {
     
     const tierInfo = checkTierUnlock(character);
     
-    const formattedResources = character.resources.map(resource => ({
-      type: resource.type,
-      tier: resource.tier,
-      count: resource.count,
-      displayName: `${resource.type} (Tier ${resource.tier})`
-    }));
+    // Use the character's toJSON method to get properly formatted data
+    const characterData = character.toJSON();
     
     res.json({
       success: true,
-      character: {
-        name: character.name,
-        currentTier: character.currentTier,
-        equipment: character.equipment,
-        resources: formattedResources
-      },
+      character: characterData,
       upgradeStatus,
       tierInfo
     });

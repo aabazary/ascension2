@@ -29,6 +29,7 @@ export const useBossBattle = () => {
     state.setPlayerHealth,
     state.setEnemyHealth,
     state.maxEnemyHealth,
+    state.setMaxPlayerHealth,
     state.setSpells,
     state.setCombatLog,
     state.setLogId,
@@ -42,6 +43,8 @@ export const useBossBattle = () => {
     state.setIsPlayerTurn,
     state.addCombatLog,
     api.submitBattleResult,
+    api.initBattle,
+    state.combatLog,
     true // isBossBattle
   );
 

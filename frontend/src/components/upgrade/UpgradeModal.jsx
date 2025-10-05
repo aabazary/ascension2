@@ -125,6 +125,30 @@ const UpgradeModal = ({ isOpen, onClose, gear, upgradeStatus, onUpgrade, loading
             </div>
           </div>
 
+          {/* Infusion Progress */}
+          {gear.currentInfusionLevel !== undefined && (
+            <div className="bg-gray-700 rounded-lg p-4 mb-6">
+              <h3 className="text-lg font-semibold text-white mb-3">Infusion Progress</h3>
+              <div className="flex items-center justify-between mb-2">
+                <span className="text-gray-300">Current Infusion Level:</span>
+                <span className="text-neon-green font-semibold">
+                  {gear.currentInfusionLevel}/{gear.totalInfusionsNeeded}
+                </span>
+              </div>
+              <div className="w-full bg-gray-600 rounded-full h-3">
+                <div 
+                  className="bg-neon-green h-3 rounded-full transition-all duration-300"
+                  style={{ 
+                    width: `${(gear.currentInfusionLevel / gear.totalInfusionsNeeded) * 100}%` 
+                  }}
+                ></div>
+              </div>
+              <p className="text-sm text-gray-400 mt-2">
+                {gear.totalInfusionsNeeded - gear.currentInfusionLevel} more infusions needed to reach Tier {gear.targetTier}
+              </p>
+            </div>
+          )}
+
           {/* Upgrade Requirements */}
           <div className="bg-gray-700 rounded-lg p-4 mb-6">
             <h3 className="text-lg font-semibold text-white mb-4">Upgrade Requirements</h3>
@@ -205,10 +229,12 @@ const UpgradeModal = ({ isOpen, onClose, gear, upgradeStatus, onUpgrade, loading
               {isUpgrading ? (
                 <div className="flex items-center justify-center gap-2">
                   <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-black"></div>
-                  Upgrading...
+                  Infusing...
                 </div>
               ) : (
-                `Upgrade to Tier ${gear.targetTier}`
+                gear.currentInfusionLevel !== undefined && gear.currentInfusionLevel + 1 < gear.totalInfusionsNeeded
+                  ? `Infuse (${gear.currentInfusionLevel + 1}/${gear.totalInfusionsNeeded})`
+                  : `Upgrade to Tier ${gear.targetTier}`
               )}
             </button>
           </div>

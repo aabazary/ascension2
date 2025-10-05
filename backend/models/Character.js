@@ -216,4 +216,18 @@ characterSchema.methods.spendResource = function(type, tier, amount) {
   throw new Error('Insufficient resources');
 };
 
+// Method to recalculate currentTier based on all equipment tiers
+characterSchema.methods.recalculateCurrentTier = function() {
+  if (!this.equipment) {
+    this.currentTier = 0;
+    return 0;
+  }
+  
+  const allEquipmentTiers = Object.values(this.equipment).map(equip => equip.tier || 0);
+  const minTier = Math.min(...allEquipmentTiers);
+  this.currentTier = minTier;
+  
+  return this.currentTier;
+};
+
 export default mongoose.model('Character', characterSchema);

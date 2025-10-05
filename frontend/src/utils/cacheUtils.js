@@ -39,6 +39,28 @@ export const updateCharacterCache = (characterId, resourceType, tier, amount) =>
   cacheUpdateListeners.forEach(listener => listener(updatedCharacters));
 };
 
+// Function to update character cache with full character data (for upgrades, etc.)
+export const updateCharacterCacheFull = (updatedCharacter) => {
+  if (!charactersCache.data) {
+    console.log('Cache is empty, skipping update');
+    return;
+  }
+  
+  // Find the character in cache and replace with updated data
+  const updatedCharacters = charactersCache.data.map(character => {
+    if (character._id === updatedCharacter._id) {
+      return updatedCharacter;
+    }
+    return character;
+  });
+  
+  charactersCache.data = updatedCharacters;
+  charactersCache.timestamp = Date.now();
+  
+  // Notify all listeners of the cache update
+  cacheUpdateListeners.forEach(listener => listener(updatedCharacters));
+};
+
 // Function to invalidate character cache
 export const invalidateCharacterCache = () => {
   charactersCache.data = null;

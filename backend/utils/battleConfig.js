@@ -1,62 +1,62 @@
 export const BATTLE_CONFIG = {
   tiers: {
     0: {
-      minionHealth: 50,
-      minionDamage: 15,
+      minionHealth: 80,
+      minionDamage: 30,
       minionName: 'Earth Dragonling',
       minionImage: '/dragonling/earth__dragonling.png',
-      bossHealth: 150,
-      bossDamage: 30,
+      bossHealth: 200,
+      bossDamage: 20,
       bossName: 'Mountain Wyrm',
       bossImage: '/dragons/mountain_wyrm.png'
     },
     1: {
-      minionHealth: 70,
-      minionDamage: 20,
+      minionHealth: 225,
+      minionDamage: 70,
       minionName: 'Inferno Dragonling',
       minionImage: '/dragonling/infero_dragonling.png',
-      bossHealth: 200,
-      bossDamage: 40,
+      bossHealth: 400,
+      bossDamage: 80,
       bossName: 'Inferno Drake',
       bossImage: '/dragons/inferno_drake.png'
     },
     2: {
-      minionHealth: 90,
+      minionHealth: 250,
       minionDamage: 25,
       minionName: 'Water Dragonling',
       minionImage: '/dragonling/water_dragonling.png',
-      bossHealth: 250,
-      bossDamage: 50,
+      bossHealth: 500,
+      bossDamage: 40,
       bossName: 'Tsunami Serpent',
       bossImage: '/dragons/tsunami_serpent.png'
     },
     3: {
-      minionHealth: 120,
-      minionDamage: 30,
+      minionHealth: 400,
+      minionDamage: 35,
       minionName: 'Lightning Dragonling',
       minionImage: '/dragonling/lightning_dragonling.png',
-      bossHealth: 300,
-      bossDamage: 60,
+      bossHealth: 700,
+      bossDamage: 55,
       bossName: 'Thunder Dragon',
       bossImage: '/dragons/thunder_dragon.png'
     },
     4: {
-      minionHealth: 150,
-      minionDamage: 35,
+      minionHealth: 600,
+      minionDamage: 50,
       minionName: 'Ice Dragonling',
       minionImage: '/dragonling/ice_dragonling.png',
-      bossHealth: 350,
-      bossDamage: 70,
+      bossHealth: 1000,
+      bossDamage: 75,
       bossName: 'Frost Wyvern',
       bossImage: '/dragons/frost_wyvern.png'
     },
     5: {
-      minionHealth: 200,
-      minionDamage: 40,
+      minionHealth: 900,
+      minionDamage: 70,
       minionName: 'Shadow Dragonling',
       minionImage: '/dragonling/void_dragonling.png',
-      bossHealth: 400,
-      bossDamage: 80,
+      bossHealth: 1500,
+      bossDamage: 100,
       bossName: 'Void Hydra',
       bossImage: '/dragons/void_hydra.png'
     }
@@ -66,25 +66,31 @@ export const BATTLE_CONFIG = {
     blast: {
       name: 'Blast',
       emoji: '💥',
-      hitChance: 0.3,
-      baseDamage: 25,
+      hitChance: 0.5,
+      baseDamage: 15,
       critChance: 1.0,
+      critMultiplier: 2.0,
+      compensationFactor: 1.0, // Average damage: 15
       description: 'A powerful energy blast'
     },
     nova: {
       name: 'Nova',
       emoji: '🌟',
-      hitChance: 0.5,
-      baseDamage: 35,
-      critChance: 0.3,
+      hitChance: 0.6,
+      baseDamage: 20,
+      critChance: 0.25,
+      critMultiplier: 2.0,
+      compensationFactor: 1.333, // Average damage: 15
       description: 'A devastating nova explosion'
     },
     bolt: {
       name: 'Bolt',
       emoji: '⚡',
       hitChance: 0.6,
-      baseDamage: 20,
+      baseDamage: 25,
       critChance: 0.0,
+      critMultiplier: 2.0,
+      compensationFactor: 1.6667, // Average damage: 15
       description: 'A quick lightning bolt'
     }
   },
