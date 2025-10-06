@@ -3,13 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import api from '../utils/api';
 import { useCharacter } from '../contexts/CharacterContext';
 import { mergeCharacterData } from '../utils/characterUtils';
-
-// Cache for gathering config
-const gatheringConfigCache = {
-  data: null,
-  timestamp: 0,
-  ttl: 10 * 60 * 1000 // 10 minutes cache
-};
+import { gatheringConfigCache, isCacheValid, clearAllCaches } from '../utils/cacheUtils';
+import { handleLogout } from '../utils/authUtils';
 
 export const useGathering = () => {
   const navigate = useNavigate();
@@ -38,10 +33,7 @@ export const useGathering = () => {
   const missCountRef = useRef(0);
 
   // Check if cache is valid
-  const isCacheValid = useMemo(() => {
-    return gatheringConfigCache.data && 
-           (Date.now() - gatheringConfigCache.timestamp) < gatheringConfigCache.ttl;
-  }, []);
+  const cacheValid = useMemo(() => isCacheValid(gatheringConfigCache), []);
 
   useEffect(() => {
     if (!isLoading && !character) {
@@ -52,14 +44,14 @@ export const useGathering = () => {
     if (!character) return; // Wait for character to load
     
     // Use cached data if available and valid
-    if (isCacheValid) {
+    if (cacheValid) {
       setGatheringConfig(gatheringConfigCache.data);
     } else {
       fetchGatheringConfig();
     }
     
     fetchUserData();
-  }, [character, isLoading, navigate, isCacheValid]);
+  }, [character, isLoading, navigate, cacheValid]);
   
 
   const fetchUserData = async () => {
@@ -74,23 +66,10 @@ export const useGathering = () => {
     }
   };
 
-  const handleLogout = async () => {
-    try {
-      await api.post('/auth/logout');
-      sessionStorage.removeItem('user');
-      // Clear gathering config cache
-      gatheringConfigCache.data = null;
-      gatheringConfigCache.timestamp = 0;
-      navigate('/');
-    } catch (error) {
-      console.error('Logout failed:', error);
-      sessionStorage.removeItem('user');
-      // Clear gathering config cache
-      gatheringConfigCache.data = null;
-      gatheringConfigCache.timestamp = 0;
-      navigate('/');
-    }
-  };
+  const logoutHandler = () => handleLogout(navigate, () => {
+    gatheringConfigCache.data = null;
+    gatheringConfigCache.timestamp = 0;
+  });
 
   const handleProfileUpdated = (updatedUserData) => {
     setUserData(updatedUserData);
@@ -359,7 +338,7 @@ export const useGathering = () => {
     startGame,
     handleEggClick,
     resetGame,
-    handleLogout,
+    handleLogout: logoutHandler,
     handleProfileUpdated
   };
 };

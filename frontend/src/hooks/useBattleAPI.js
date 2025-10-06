@@ -1,13 +1,11 @@
 import { useEffect, useMemo } from 'react';
 import api from '../utils/api';
-import { battleConfigCache } from '../utils/cacheUtils';
+import { battleConfigCache, isCacheValid } from '../utils/cacheUtils';
+import { handleLogout, handleProfileUpdated, fetchUserData } from '../utils/authUtils';
 
 export const useBattleAPI = (character, navigate, setBattleConfig, setUserData, isLoading) => {
   // Check if cache is valid
-  const isCacheValid = useMemo(() => {
-    return battleConfigCache.data && 
-           (Date.now() - battleConfigCache.timestamp) < battleConfigCache.ttl;
-  }, []);
+  const cacheValid = useMemo(() => isCacheValid(battleConfigCache), []);
 
   // Fetch battle config
   useEffect(() => {
@@ -19,48 +17,14 @@ export const useBattleAPI = (character, navigate, setBattleConfig, setUserData, 
     if (!character) return; // Wait for character to load
     
     // Use cached data if available and valid
-    if (isCacheValid) {
+    if (cacheValid) {
       setBattleConfig(battleConfigCache.data);
     } else {
       fetchBattleConfig();
     }
     
-    fetchUserData();
-  }, [character, isLoading, navigate, isCacheValid]);
-
-  const fetchUserData = async () => {
-    try {
-      const response = await api.get('/auth/me');
-      if (response.data.success) {
-        setUserData(response.data.user);
-      }
-    } catch (error) {
-      console.error('Failed to fetch user data:', error);
-      navigate('/');
-    }
-  };
-
-  const handleLogout = async () => {
-    try {
-      await api.post('/auth/logout');
-      sessionStorage.removeItem('user');
-      // Clear battle config cache
-      battleConfigCache.data = null;
-      battleConfigCache.timestamp = 0;
-      navigate('/');
-    } catch (error) {
-      console.error('Logout failed:', error);
-      sessionStorage.removeItem('user');
-      // Clear battle config cache
-      battleConfigCache.data = null;
-      battleConfigCache.timestamp = 0;
-      navigate('/');
-    }
-  };
-
-  const handleProfileUpdated = (updatedUserData) => {
-    setUserData(updatedUserData);
-  };
+    fetchUserData(setUserData, navigate);
+  }, [character, isLoading, navigate, cacheValid]);
 
   const fetchBattleConfig = async () => {
     try {
@@ -115,10 +79,12 @@ export const useBattleAPI = (character, navigate, setBattleConfig, setUserData, 
   };
 
   return {
-    fetchUserData,
-    handleLogout,
-    handleProfileUpdated,
     fetchBattleConfig,
+    handleLogout: () => handleLogout(navigate, () => {
+      battleConfigCache.data = null;
+      battleConfigCache.timestamp = 0;
+    }),
+    handleProfileUpdated: (updatedUserData) => handleProfileUpdated(updatedUserData, setUserData),
     initBattle,
     submitBattleResult
   };

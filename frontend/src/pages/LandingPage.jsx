@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import AuthModal from '../components/AuthModal';
 import Header from '../components/shared/Header';
 import api from '../utils/api';
-import { clearAllCaches } from '../utils/cacheUtils';
+import { clearAllCaches, isCacheValid } from '../utils/cacheUtils';
 
 // Cache for leaderboard data
 const leaderboardCache = {
@@ -31,15 +31,8 @@ const LandingPage = ({ setIsAuthenticated, userData, setUserData }) => {
   const navigate = useNavigate();
 
   // Check if cache is valid
-  const isLeaderboardCacheValid = useMemo(() => {
-    return leaderboardCache.data && 
-           (Date.now() - leaderboardCache.timestamp) < leaderboardCache.ttl;
-  }, []);
-
-  const isTopAdventurersCacheValid = useMemo(() => {
-    return topAdventurersCache.data && 
-           (Date.now() - topAdventurersCache.timestamp) < topAdventurersCache.ttl;
-  }, []);
+  const isLeaderboardCacheValid = useMemo(() => isCacheValid(leaderboardCache), []);
+  const isTopAdventurersCacheValid = useMemo(() => isCacheValid(topAdventurersCache), []);
 
   useEffect(() => {
     // Use cached data if available and valid

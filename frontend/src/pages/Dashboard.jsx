@@ -8,7 +8,6 @@ import ActivityButtons from '../components/dashboard/ActivityButtons';
 import ResourceDisplay from '../components/dashboard/ResourceDisplay';
 import CharacterStats from '../components/dashboard/CharacterStats';
 import ResourceSummary from '../components/dashboard/ResourceSummary';
-import { useEffect, useState } from 'react';
 
 const Dashboard = ({ setIsAuthenticated, userData, setUserData }) => {
   const {

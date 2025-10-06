@@ -12,6 +12,13 @@ export const battleConfigCache = {
   ttl: 10 * 60 * 1000 // 10 minutes cache
 };
 
+// Cache for gathering config data
+export const gatheringConfigCache = {
+  data: null,
+  timestamp: 0,
+  ttl: 10 * 60 * 1000 // 10 minutes cache
+};
+
 
 
 // Function to update character cache with full character data (for upgrades, etc.)
@@ -34,13 +41,20 @@ export const updateCharacterCacheFull = (updatedCharacter) => {
   
 };
 
+// Utility function to check if cache is valid
+export const isCacheValid = (cache) => {
+  return cache.data && (Date.now() - cache.timestamp) < cache.ttl;
+};
+
 // Function to clear all caches (useful for logout)
 export const clearAllCaches = () => {
   charactersCache.data = null;
   charactersCache.timestamp = 0;
   battleConfigCache.data = null;
   battleConfigCache.timestamp = 0;
-  
+  gatheringConfigCache.data = null;
+  gatheringConfigCache.timestamp = 0;
+
   // Clear other caches if they exist
   if (typeof window !== 'undefined') {
     // Clear any localStorage cache entries (but preserve user data)
