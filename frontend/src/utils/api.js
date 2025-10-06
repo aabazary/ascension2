@@ -62,7 +62,7 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (refreshError) {
         processQueue(refreshError, null);
-        localStorage.removeItem('user');
+        sessionStorage.removeItem('user');
         window.location.href = '/';
         return Promise.reject(refreshError);
       } finally {

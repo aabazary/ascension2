@@ -113,18 +113,18 @@ const LandingPage = ({ setIsAuthenticated, userData, setUserData }) => {
 
   const handleProfileUpdated = (updatedUser) => {
     setUserData(updatedUser);
-    localStorage.setItem('user', JSON.stringify(updatedUser));
+    sessionStorage.setItem('user', JSON.stringify(updatedUser));
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('user');
+    sessionStorage.removeItem('user');
     setUserData(null);
     setIsAuthenticated(false);
     clearAllCaches(); // Clear all caches on logout
   };
 
   const handleGoToDashboard = () => {
-    const user = localStorage.getItem('user');
+    const user = sessionStorage.getItem('user');
     if (user) {
       navigate('/dashboard');
     } else {

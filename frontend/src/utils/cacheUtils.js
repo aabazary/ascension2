@@ -47,7 +47,7 @@ export const clearAllCaches = () => {
     const keysToRemove = [];
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (key && (key.startsWith('cache_') || key === 'selectedCharacterId' || key === 'cachedCharacter')) {
+      if (key && key.startsWith('cache_')) {
         keysToRemove.push(key);
       }
     }

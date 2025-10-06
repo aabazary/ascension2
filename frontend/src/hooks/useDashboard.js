@@ -4,8 +4,8 @@ import api from '../utils/api';
 import { clearAllCaches } from '../utils/cacheUtils';
 import { useCharacter } from '../contexts/CharacterContext';
 
-export const useDashboard = (setIsAuthenticated, setUserData) => {
-  const { characters, selectedCharacter, selectCharacter, updateCharacter } = useCharacter();
+export const useDashboard = (setIsAuthenticated, setUserData, userData) => {
+  const { characters, selectedCharacter, selectCharacter, updateCharacter, resetCharacters, loadCharacters, isLoading } = useCharacter();
   const [isCharacterModalOpen, setIsCharacterModalOpen] = useState(false);
   const [isCharacterEditModalOpen, setIsCharacterEditModalOpen] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
@@ -13,13 +13,25 @@ export const useDashboard = (setIsAuthenticated, setUserData) => {
   const [characterToDelete, setCharacterToDelete] = useState(null);
   const navigate = useNavigate();
 
+  // Reset dashboard state when user changes
+  useEffect(() => {
+    if (userData) {
+      setIsCharacterModalOpen(false);
+      setIsCharacterEditModalOpen(false);
+      setIsConfirmModalOpen(false);
+      setCharacterToEdit(null);
+      setCharacterToDelete(null);
+    }
+  }, [userData?._id || userData?.id]);
+
   // Enhanced setSelectedCharacter that uses context
   const handleCharacterSelect = (character) => {
     selectCharacter(character._id);
   };
 
   const handleCharacterCreated = async () => {
-    // Characters will be automatically updated by the context
+    // Reload characters to show the newly created one
+    await loadCharacters();
     setIsCharacterModalOpen(false);
   };
 
@@ -29,7 +41,8 @@ export const useDashboard = (setIsAuthenticated, setUserData) => {
   };
 
   const handleCharacterUpdated = async () => {
-    // Characters will be automatically updated by the context
+    // Reload characters to show the updated one
+    await loadCharacters();
     setIsCharacterEditModalOpen(false);
     setCharacterToEdit(null);
   };
@@ -45,8 +58,8 @@ export const useDashboard = (setIsAuthenticated, setUserData) => {
     try {
       const response = await api.delete(`/characters/${characterToDelete._id}`);
       if (response.data.success) {
-        // Characters will be automatically updated by the context
-        // If we deleted the selected character, the context will handle selection
+        // Reload characters to reflect the deletion
+        await loadCharacters();
       }
     } catch (error) {
       console.error('Failed to delete character:', error);
@@ -66,24 +79,26 @@ export const useDashboard = (setIsAuthenticated, setUserData) => {
   const handleLogout = async () => {
     try {
       await api.post('/auth/logout');
-      localStorage.removeItem('user');
+      sessionStorage.removeItem('user');
       setUserData(null);
       setIsAuthenticated(false);
       clearAllCaches(); // Clear all caches on logout
+      resetCharacters(); // Reset character context state
       navigate('/');
     } catch (error) {
       console.error('Logout failed:', error);
-      localStorage.removeItem('user');
+      sessionStorage.removeItem('user');
       setUserData(null);
       setIsAuthenticated(false);
       clearAllCaches(); // Clear all caches on logout
+      resetCharacters(); // Reset character context state
       navigate('/');
     }
   };
 
   const handleProfileUpdated = (updatedUserData) => {
     setUserData(updatedUserData);
-    localStorage.setItem('user', JSON.stringify(updatedUserData));
+    sessionStorage.setItem('user', JSON.stringify(updatedUserData));
   };
 
   return {
@@ -95,6 +110,7 @@ export const useDashboard = (setIsAuthenticated, setUserData) => {
     isConfirmModalOpen,
     characterToEdit,
     characterToDelete,
+            loading: isLoading, // Add loading state from context
     
     // Actions
     setSelectedCharacter: handleCharacterSelect,

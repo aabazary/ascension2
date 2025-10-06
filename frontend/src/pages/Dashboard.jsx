@@ -8,6 +8,7 @@ import ActivityButtons from '../components/dashboard/ActivityButtons';
 import ResourceDisplay from '../components/dashboard/ResourceDisplay';
 import CharacterStats from '../components/dashboard/CharacterStats';
 import ResourceSummary from '../components/dashboard/ResourceSummary';
+import { useEffect, useState } from 'react';
 
 const Dashboard = ({ setIsAuthenticated, userData, setUserData }) => {
   const {
@@ -31,41 +32,44 @@ const Dashboard = ({ setIsAuthenticated, userData, setUserData }) => {
     handleCreateCharacter,
     handleLogout,
     handleProfileUpdated
-  } = useDashboard(setIsAuthenticated, setUserData);
+  } = useDashboard(setIsAuthenticated, setUserData, userData);
 
-  if (loading) {
+
+
+  // Show loading only if we have userData but no characters yet
+  if (userData && characters.length === 0) {
     return (
       <div className="min-h-screen bg-dark-bg flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-neon-green mx-auto mb-4"></div>
-          <p className="text-gray-400">Loading dashboard...</p>
+          <p className="text-gray-400">Loading characters...</p>
         </div>
       </div>
     );
   }
 
-  return (
-    <div className="min-h-screen bg-dark-bg">
-      <Header 
-        showDashboard={false}
-        showLogout={true}
-        onLogout={handleLogout}
-        userData={userData}
-        onProfileUpdated={handleProfileUpdated}
-        selectedCharacter={selectedCharacter}
-      />
+          return (
+            <div className="min-h-screen bg-dark-bg">
+              <Header 
+                showDashboard={false}
+                showLogout={true}
+                onLogout={handleLogout}
+                userData={userData}
+                onProfileUpdated={handleProfileUpdated}
+                selectedCharacter={selectedCharacter}
+              />
 
       <main className="container mx-auto px-4 py-12">
         <div className="max-w-5xl mx-auto">
-          {/* Character Selection */}
-          <CharacterSelection
-            characters={characters}
-            selectedCharacter={selectedCharacter}
-            onCharacterSelect={setSelectedCharacter}
-            onCreateCharacter={handleCreateCharacter}
-            onEditCharacter={handleEditCharacter}
-            onDeleteCharacter={handleDeleteCharacter}
-          />
+                  {/* Character Selection */}
+                  <CharacterSelection
+                    characters={characters}
+                    selectedCharacter={selectedCharacter}
+                    onCharacterSelect={setSelectedCharacter}
+                    onCreateCharacter={handleCreateCharacter}
+                    onEditCharacter={handleEditCharacter}
+                    onDeleteCharacter={handleDeleteCharacter}
+                  />
 
           {selectedCharacter && (
             <>

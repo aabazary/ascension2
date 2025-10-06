@@ -1,5 +1,4 @@
 import Character from '../models/Character.js';
-import BattleSession from '../models/BattleSession.js';
 import ActivityLog from '../models/ActivityLog.js';
 import { asyncHandler } from '../middleware/errorHandler.js';
 import { BATTLE_CONFIG } from '../utils/battleConfig.js';
@@ -143,16 +142,6 @@ const startMinionBattle = asyncHandler(async (req, res) => {
     const characterHealth = calculateCharacterHealth(character);
     const characterPower = calculateCharacterPower(character);
     
-    // Create a BattleSession to store the battle log
-    const battleSession = await BattleSession.create({
-      characterId: character._id,
-      tier: tier,
-      battleType: 'minion',
-      enemyHealth: battleResult.enemyHealth || 100,
-      characterHealth: battleResult.playerHealth || characterHealth,
-      turn: 1,
-      battleLog: battleResult.battleLog || []
-    });
     
     // Update character stats
     if (battleResult.won) {
@@ -306,17 +295,6 @@ const startBossBattle = asyncHandler(async (req, res) => {
     // Calculate character stats for battle
     const characterHealth = calculateCharacterHealth(character);
     const characterPower = calculateCharacterPower(character);
-    
-    // Create a BattleSession to store the battle log
-    const battleSession = await BattleSession.create({
-      characterId: character._id,
-      tier: tier,
-      battleType: 'boss',
-      enemyHealth: battleResult.enemyHealth || 150,
-      characterHealth: battleResult.playerHealth || characterHealth,
-      turn: 1,
-      battleLog: battleResult.battleLog || []
-    });
     
     // Update character stats
     if (battleResult.won) {

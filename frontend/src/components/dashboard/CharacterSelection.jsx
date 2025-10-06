@@ -29,7 +29,8 @@ const CharacterSelection = ({
             </button>
           </div>
         ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {characters.map((character) => (
               <div
                 key={character._id}
@@ -107,6 +108,7 @@ const CharacterSelection = ({
                 </button>
               </div>
             )}
+            </div>
           </div>
         )}
       </div>

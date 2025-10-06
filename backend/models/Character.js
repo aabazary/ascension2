@@ -133,10 +133,6 @@ const characterSchema = new mongoose.Schema({
     ice: { defeated: Boolean, tier: Number },
     shadow: { defeated: Boolean, tier: Number }
   },
-  unlockedAvatars: [{
-    type: String,
-    enum: ['fire', 'water', 'earth', 'air', 'lightning', 'ice', 'shadow']
-  }],
   createdAt: {
     type: Date,
     default: Date.now

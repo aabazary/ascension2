@@ -43,14 +43,14 @@ export const useBattleAPI = (character, navigate, setBattleConfig, setUserData, 
   const handleLogout = async () => {
     try {
       await api.post('/auth/logout');
-      localStorage.removeItem('user');
+      sessionStorage.removeItem('user');
       // Clear battle config cache
       battleConfigCache.data = null;
       battleConfigCache.timestamp = 0;
       navigate('/');
     } catch (error) {
       console.error('Logout failed:', error);
-      localStorage.removeItem('user');
+      sessionStorage.removeItem('user');
       // Clear battle config cache
       battleConfigCache.data = null;
       battleConfigCache.timestamp = 0;

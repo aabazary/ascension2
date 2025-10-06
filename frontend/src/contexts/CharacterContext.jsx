@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useEffect } from 'react';
+import { createContext, useContext, useState, useEffect, useRef } from 'react';
 import api from '../utils/api';
 import { charactersCache } from '../utils/cacheUtils';
 
@@ -12,35 +12,40 @@ export const useCharacter = () => {
   return context;
 };
 
-export const CharacterProvider = ({ children }) => {
-  // Initialize selected character from localStorage immediately
-  const [selectedCharacter, setSelectedCharacter] = useState(() => {
-    try {
-      const selectedCharacterId = localStorage.getItem('selectedCharacterId');
-      const cachedCharacter = localStorage.getItem('cachedCharacter');
-      
-      if (selectedCharacterId && cachedCharacter) {
-        const parsedCharacter = JSON.parse(cachedCharacter);
-        // Verify it's the same character ID
-        if (parsedCharacter._id === selectedCharacterId) {
-          return parsedCharacter;
-        }
-      }
-    } catch (error) {
-      console.error('Failed to restore character from localStorage:', error);
-    }
-    return null;
-  });
+export const CharacterProvider = ({ children, userData }) => {
+  const [selectedCharacter, setSelectedCharacter] = useState(null);
   const [characters, setCharacters] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const loadingRef = useRef(false);
+
+  // Reset character context state (useful for user changes)
+  const resetCharacters = () => {
+    setSelectedCharacter(null);
+    setCharacters([]);
+    setIsLoading(true);
+  };
 
   // Load characters from API
-  const loadCharacters = async () => {
+  const loadCharacters = async (retryCount = 0) => {
+    // Prevent duplicate calls
+    if (loadingRef.current) {
+      return;
+    }
+    
+    loadingRef.current = true;
     setIsLoading(true);
+    
     try {
       const response = await api.get('/characters');
       if (response.data.success) {
         const charactersData = response.data.characters;
+        
+        // If we get an empty array and this is the first attempt, retry after a delay
+        if (charactersData.length === 0 && retryCount === 0) {
+          setTimeout(() => loadCharacters(1), 2000);
+          return;
+        }
+        
         setCharacters(charactersData);
         
         // Update cache
@@ -48,14 +53,19 @@ export const CharacterProvider = ({ children }) => {
         charactersCache.timestamp = Date.now();
         
         // If no character is selected but we have characters, select the first one
-        if (!selectedCharacter && charactersData.length > 0) {
+        if (charactersData.length > 0) {
           setSelectedCharacter(charactersData[0]);
         }
       }
     } catch (error) {
       console.error('Failed to load characters:', error);
+      // If authentication fails, try again in a bit
+      if (error.response?.status === 401) {
+        setTimeout(() => loadCharacters(retryCount + 1), 1000);
+      }
     } finally {
       setIsLoading(false);
+      loadingRef.current = false;
     }
   };
 
@@ -64,9 +74,6 @@ export const CharacterProvider = ({ children }) => {
     const character = characters.find(char => char._id === characterId);
     if (character) {
       setSelectedCharacter(character);
-      // Store selected character ID and data in localStorage for persistence
-      localStorage.setItem('selectedCharacterId', characterId);
-      localStorage.setItem('cachedCharacter', JSON.stringify(character));
     }
   };
 
@@ -75,46 +82,54 @@ export const CharacterProvider = ({ children }) => {
     if (!updatedCharacter) return;
     
     // Update in characters array
-    setCharacters(prev => prev.map(char => 
-      char._id === updatedCharacter._id ? updatedCharacter : char
-    ));
-    
-    // Update cache
-    charactersCache.data = characters.map(char => 
-      char._id === updatedCharacter._id ? updatedCharacter : char
-    );
-    charactersCache.timestamp = Date.now();
+    setCharacters(prev => {
+      const updated = prev.map(char => 
+        char._id === updatedCharacter._id ? updatedCharacter : char
+      );
+      
+      // Update cache with the new array
+      charactersCache.data = updated;
+      charactersCache.timestamp = Date.now();
+      
+      return updated;
+    });
     
     // Update selected character if it's the same one
     if (selectedCharacter && selectedCharacter._id === updatedCharacter._id) {
       setSelectedCharacter(updatedCharacter);
-      // Update localStorage cache
-      localStorage.setItem('cachedCharacter', JSON.stringify(updatedCharacter));
     }
   };
 
-  // Update selected character when characters are loaded
+  // Auto-select first character when characters are loaded
   useEffect(() => {
-    const selectedCharacterId = localStorage.getItem('selectedCharacterId');
-    if (selectedCharacterId && characters.length > 0) {
-      const character = characters.find(char => char._id === selectedCharacterId);
-      if (character && (!selectedCharacter || selectedCharacter._id !== character._id)) {
-        setSelectedCharacter(character);
-        // Update localStorage cache with fresh data
-        localStorage.setItem('cachedCharacter', JSON.stringify(character));
-      }
-    } else if (characters.length > 0 && !selectedCharacter) {
+    if (characters.length > 0 && !selectedCharacter) {
       // If no character selected but we have characters, select the first one
       setSelectedCharacter(characters[0]);
-      localStorage.setItem('selectedCharacterId', characters[0]._id);
-      localStorage.setItem('cachedCharacter', JSON.stringify(characters[0]));
     }
   }, [characters, selectedCharacter]);
 
-  // Load characters on mount
+  // Reset and reload characters when user changes
   useEffect(() => {
-    loadCharacters();
-  }, []);
+    if (userData) {
+      // Reset state first to clear any previous user's data
+      resetCharacters();
+      // Force a complete reset by clearing cache
+      charactersCache.data = null;
+      charactersCache.timestamp = 0;
+      // Then load fresh characters for the new user
+      setTimeout(() => {
+        loadCharacters();
+      }, 100);
+    } else {
+      // No user data, reset everything
+      resetCharacters();
+      charactersCache.data = null;
+      charactersCache.timestamp = 0;
+    }
+  }, [userData?._id || userData?.id]); // Use userData._id or userData.id
+
+  // Note: sessionStorage events don't work across tabs, so we rely on userData prop changes
+
 
   const value = {
     selectedCharacter,
@@ -122,7 +137,8 @@ export const CharacterProvider = ({ children }) => {
     isLoading,
     selectCharacter,
     updateCharacter,
-    loadCharacters
+    loadCharacters,
+    resetCharacters
   };
 
   return (

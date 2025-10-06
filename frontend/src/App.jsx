@@ -11,27 +11,31 @@ import { clearAllCaches } from './utils/cacheUtils';
 import { CharacterProvider } from './contexts/CharacterContext';
 
 function App() {
-  // Initialize authentication state from localStorage to prevent redirect on refresh
-  const [isAuthenticated, setIsAuthenticated] = useState(() => {
-    const user = localStorage.getItem('user');
-    return !!user;
-  });
-  const [userData, setUserData] = useState(() => {
-    const user = localStorage.getItem('user');
-    return user ? JSON.parse(user) : null;
-  });
+  // Initialize authentication state from sessionStorage (more secure)
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [userData, setUserData] = useState(null);
+  const [isInitialized, setIsInitialized] = useState(false);
 
   useEffect(() => {
-    // Check if user is authenticated (check localStorage for user data)
-    const user = localStorage.getItem('user');
-    // Only update state if it's different from initial state
-    if (user && !isAuthenticated) {
-      setIsAuthenticated(true);
-      setUserData(JSON.parse(user));
-    } else if (!user && isAuthenticated) {
+    // Initialize authentication state from sessionStorage
+    const user = sessionStorage.getItem('user');
+    
+    if (user) {
+      try {
+        const parsedUser = JSON.parse(user);
+        setIsAuthenticated(true);
+        setUserData(parsedUser);
+      } catch (error) {
+        console.error('Error parsing user data:', error);
+        setIsAuthenticated(false);
+        setUserData(null);
+      }
+    } else {
       setIsAuthenticated(false);
       setUserData(null);
     }
+    
+    setIsInitialized(true);
 
     // Handle OAuth redirect
     const urlParams = new URLSearchParams(window.location.search);
@@ -48,6 +52,7 @@ function App() {
       // Clean up URL
       window.history.replaceState({}, document.title, window.location.pathname);
     }
+
   }, []);
 
   const fetchUserData = async () => {
@@ -58,7 +63,7 @@ function App() {
               if (response.ok) {
                 const data = await response.json();
                 if (data.success) {
-                  localStorage.setItem('user', JSON.stringify(data.user));
+                  sessionStorage.setItem('user', JSON.stringify(data.user));
                   setUserData(data.user);
                   setIsAuthenticated(true);
                   clearAllCaches(); // Clear caches on login to ensure fresh data
@@ -69,8 +74,32 @@ function App() {
     }
   };
 
+  // Show loading screen while initializing authentication state
+  if (!isInitialized) {
+    return (
+      <div className="min-h-screen bg-dark-bg flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-neon-green mx-auto mb-4"></div>
+          <p className="text-gray-400">Initializing...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Force sync userData from sessionStorage if it's null but sessionStorage has data
+  const sessionUser = sessionStorage.getItem('user');
+  if (sessionUser && !userData) {
+    try {
+      const parsedUser = JSON.parse(sessionUser);
+      setUserData(parsedUser);
+      setIsAuthenticated(true);
+    } catch (error) {
+      console.error('Error parsing user data:', error);
+    }
+  }
+
   return (
-    <CharacterProvider>
+    <CharacterProvider userData={userData}>
       <Router>
         <Routes>
           <Route 
@@ -79,7 +108,7 @@ function App() {
           />
           <Route 
             path="/dashboard" 
-            element={isAuthenticated ? <Dashboard setIsAuthenticated={setIsAuthenticated} userData={userData} setUserData={setUserData} /> : <Navigate to="/" />} 
+            element={isAuthenticated && userData ? <Dashboard key={userData?._id || userData?.id || 'no-user'} setIsAuthenticated={setIsAuthenticated} userData={userData} setUserData={setUserData} /> : <Navigate to="/" />} 
           />
           <Route 
             path="/gathering" 

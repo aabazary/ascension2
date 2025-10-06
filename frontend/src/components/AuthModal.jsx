@@ -38,7 +38,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
         });
 
         if (response.data.success) {
-          localStorage.setItem('user', JSON.stringify(response.data.user));
+          sessionStorage.setItem('user', JSON.stringify(response.data.user));
           onAuthSuccess();
           onClose();
         } else {
@@ -52,7 +52,7 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
         });
 
         if (response.data.success) {
-          localStorage.setItem('user', JSON.stringify(response.data.user));
+          sessionStorage.setItem('user', JSON.stringify(response.data.user));
           onAuthSuccess();
           onClose();
         } else {
