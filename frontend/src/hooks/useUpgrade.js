@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import api from '../utils/api';
-import { updateCharacterCache, updateCharacterCacheFull } from '../utils/cacheUtils';
+import { updateCharacterCacheFull } from '../utils/cacheUtils';
 import { useCharacter } from '../contexts/CharacterContext';
 
 export const useUpgrade = (character) => {

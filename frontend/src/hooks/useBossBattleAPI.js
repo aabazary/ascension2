@@ -2,13 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLocation } from 'react-router-dom';
 import api from '../utils/api';
-
-// Cache for battle config
-const battleConfigCache = {
-  data: null,
-  timestamp: 0,
-  ttl: 10 * 60 * 1000 // 10 minutes cache
-};
+import { battleConfigCache } from '../utils/cacheUtils';
 
 export const useBossBattleAPI = (character, navigate, setBattleConfig, setUserData, isLoading) => {
   const [userData, setUserDataLocal] = useState(null);

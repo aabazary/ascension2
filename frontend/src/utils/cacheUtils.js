@@ -5,35 +5,14 @@ export const charactersCache = {
   ttl: 2 * 60 * 1000 // 2 minutes cache
 };
 
-
-// Function to update character cache with new resource data
-export const updateCharacterCache = (characterId, resourceType, tier, amount) => {
-  if (!charactersCache.data) {
-    console.log('Cache is empty, skipping update');
-    return;
-  }
-  
-  // Find the character in cache and update their resources
-  const updatedCharacters = charactersCache.data.map(character => {
-    if (character._id === characterId) {
-      return {
-        ...character,
-        resources: {
-          ...character.resources,
-          [resourceType]: {
-            ...character.resources[resourceType],
-            [tier]: (character.resources[resourceType]?.[tier] || 0) + amount
-          }
-        }
-      };
-    }
-    return character;
-  });
-  
-  charactersCache.data = updatedCharacters;
-  charactersCache.timestamp = Date.now();
-  
+// Cache for battle config data (shared between regular and boss battles)
+export const battleConfigCache = {
+  data: null,
+  timestamp: 0,
+  ttl: 10 * 60 * 1000 // 10 minutes cache
 };
+
+
 
 // Function to update character cache with full character data (for upgrades, etc.)
 export const updateCharacterCacheFull = (updatedCharacter) => {
@@ -55,11 +34,12 @@ export const updateCharacterCacheFull = (updatedCharacter) => {
   
 };
 
-
 // Function to clear all caches (useful for logout)
 export const clearAllCaches = () => {
   charactersCache.data = null;
   charactersCache.timestamp = 0;
+  battleConfigCache.data = null;
+  battleConfigCache.timestamp = 0;
   
   // Clear other caches if they exist
   if (typeof window !== 'undefined') {

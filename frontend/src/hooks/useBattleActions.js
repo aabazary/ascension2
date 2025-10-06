@@ -1,4 +1,5 @@
-import { updateCharacterCache } from '../utils/cacheUtils';
+
+import { transformResources } from '../utils/characterUtils';
 
 export const useBattleActions = (
   battleConfig,
@@ -248,21 +249,10 @@ export const useBattleActions = (
     // For bosses: need at least 2 higher tier pieces
     const requiredHigherTierPieces = isBossBattle ? 2 : 1;
     
-    console.log('Vulnerable strike check:', {
-      battleTier,
-      requiredTier,
-      higherTierItems,
-      requiredHigherTierPieces,
-      isBossBattle,
-      equipment: character.equipment
-    });
-    
     if (higherTierItems >= requiredHigherTierPieces) {
-      console.log('Not vulnerable - has enough higher tier pieces');
       return 0; // Not vulnerable
     }
     
-    console.log('Vulnerable - insufficient higher tier pieces');
     return 1; // Vulnerable to strikes
   };
 
@@ -330,13 +320,6 @@ export const useBattleActions = (
             const vulnerableRoll = Math.random();
             const isVulnerableStrike = isVulnerable && vulnerableRoll < 0.5;
             
-            console.log('Vulnerable strike calculation:', {
-              missingTierItems,
-              vulnerableRoll,
-              isVulnerable,
-              isVulnerableStrike,
-              vulnerableChance: missingTierItems > 0 ? 0.5 : 0
-            });
             
             let finalDamage = baseDamage;
             let damageMultiplier = 1;
@@ -432,23 +415,6 @@ export const useBattleActions = (
     // Update character context with updated character data if available
     if (result.character && updateCharacter) {
       // Transform resources from array format to object format (like the Character model's toJSON method)
-      const transformResources = (resourcesArray) => {
-        const resourcesObj = {
-          gathering: {},
-          minion: {},
-          boss: {}
-        };
-        
-        if (resourcesArray && Array.isArray(resourcesArray)) {
-          resourcesArray.forEach(resource => {
-            if (resourcesObj[resource.type]) {
-              resourcesObj[resource.type][resource.tier] = resource.count;
-            }
-          });
-        }
-        
-        return resourcesObj;
-      };
       
       // The backend returns partial character data (stats and resources in array format)
       // We need to merge it with the existing character data and transform resources
