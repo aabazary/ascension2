@@ -40,12 +40,6 @@ export const CharacterProvider = ({ children, userData }) => {
       if (response.data.success) {
         const charactersData = response.data.characters;
         
-        // If we get an empty array and this is the first attempt, retry after a delay
-        if (charactersData.length === 0 && retryCount === 0) {
-          setTimeout(() => loadCharacters(1), 2000);
-          return;
-        }
-        
         setCharacters(charactersData);
         
         // Update cache
@@ -56,16 +50,21 @@ export const CharacterProvider = ({ children, userData }) => {
         if (charactersData.length > 0) {
           setSelectedCharacter(charactersData[0]);
         }
+        
+        // Set loading to false when we have a definitive result
+        setIsLoading(false);
+        loadingRef.current = false;
       }
     } catch (error) {
       console.error('Failed to load characters:', error);
       // If authentication fails, try again in a bit
       if (error.response?.status === 401) {
         setTimeout(() => loadCharacters(retryCount + 1), 1000);
+      } else {
+        // Only set loading to false if we're not retrying
+        setIsLoading(false);
+        loadingRef.current = false;
       }
-    } finally {
-      setIsLoading(false);
-      loadingRef.current = false;
     }
   };
 

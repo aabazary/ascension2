@@ -35,8 +35,8 @@ const Dashboard = ({ setIsAuthenticated, userData, setUserData }) => {
 
 
 
-  // Show loading only if we have userData but no characters yet
-  if (userData && characters.length === 0) {
+  // Show loading only if we have userData and are still loading characters
+  if (userData && loading) {
     return (
       <div className="min-h-screen bg-dark-bg flex items-center justify-center">
         <div className="text-center">
