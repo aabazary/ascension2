@@ -23,8 +23,40 @@
       "dest": "/backend/server.js"
     },
     {
+      "src": "/mages/(.*)",
+      "dest": "/frontend/dist/mages/$1"
+    },
+    {
+      "src": "/dragons/(.*)",
+      "dest": "/frontend/dist/dragons/$1"
+    },
+    {
+      "src": "/dragonling/(.*)",
+      "dest": "/frontend/dist/dragonling/$1"
+    },
+    {
+      "src": "/armor/(.*)",
+      "dest": "/frontend/dist/armor/$1"
+    },
+    {
+      "src": "/spells/(.*)",
+      "dest": "/frontend/dist/spells/$1"
+    },
+    {
+      "src": "/ascenion/(.*)",
+      "dest": "/frontend/dist/ascenion/$1"
+    },
+    {
+      "src": "/screenshots/(.*)",
+      "dest": "/frontend/dist/screenshots/$1"
+    },
+    {
+      "src": "/assets/(.*)",
+      "dest": "/frontend/dist/assets/$1"
+    },
+    {
       "src": "/(.*)",
-      "dest": "/frontend/dist/$1"
+      "dest": "/frontend/dist/index.html"
     }
   ],
   "env": {
