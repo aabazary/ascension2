@@ -57,7 +57,8 @@ function App() {
 
   const fetchUserData = async () => {
     try {
-      const response = await fetch('/api/auth/me', {
+      const backendUrl = import.meta.env.VITE_API_URL || '/api';
+      const response = await fetch(`${backendUrl}/auth/me`, {
         credentials: 'include'
       });
               if (response.ok) {
