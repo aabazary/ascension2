@@ -11,7 +11,7 @@
   ],
   "routes": [
     {
-      "src": "/(.*)",
+      "src": "/((?!assets/|mages/|dragons/|dragonling/|armor/|spells/|ascenion/|screenshots/).*)",
       "dest": "/index.html"
     }
   ]
