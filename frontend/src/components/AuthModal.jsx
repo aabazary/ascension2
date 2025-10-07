@@ -87,7 +87,8 @@ const AuthModal = ({ isOpen, onClose, onAuthSuccess }) => {
 
   const handleGoogleLogin = () => {
     // Redirect to backend Google OAuth endpoint
-    window.location.href = '/api/auth/google';
+    const backendUrl = import.meta.env.VITE_API_URL || '/api';
+    window.location.href = `${backendUrl}/auth/google`;
   };
 
   const handleForgotPassword = () => {

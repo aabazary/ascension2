@@ -1,0 +1,8 @@
+{
+  "rewrites": [
+    {
+      "source": "/((?!assets/|mages/|dragons/|dragonling/|armor/|spells/|ascenion/|screenshots/).*)",
+      "destination": "/index.html"
+    }
+  ]
+}
