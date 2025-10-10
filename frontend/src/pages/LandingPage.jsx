@@ -130,22 +130,12 @@ const LandingPage = ({ setIsAuthenticated, userData, setUserData }) => {
       <Header 
         showDashboard={!!userData}
         showLogout={!!userData}
+        showLogin={!userData}
         onLogout={handleLogout}
+        onLogin={() => setIsAuthModalOpen(true)}
         userData={userData}
         onProfileUpdated={handleProfileUpdated}
       />
-      
-      {/* Custom login button for non-authenticated users */}
-      {!userData && (
-        <div className="absolute top-4 right-4 z-10">
-          <button
-            onClick={() => setIsAuthModalOpen(true)}
-            className="px-3 py-2 sm:px-4 sm:py-2 font-arcade text-xs bg-dark-panel border border-dark-border rounded-lg hover:border-neon-pink transition-colors"
-          >
-            LOGIN
-          </button>
-        </div>
-      )}
 
       <main className="container mx-auto px-4 py-8">
         <div className="text-center mb-12">

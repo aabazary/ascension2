@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import ProfileModal from '../ProfileModal';
 import { getAvatarImage } from '../../constants/avatars';
 
-const Header = ({ showDashboard = true, showLogout = false, onLogout, userData, onProfileUpdated, selectedCharacter }) => {
+const Header = ({ showDashboard = true, showLogout = false, showLogin = false, onLogout, onLogin, userData, onProfileUpdated, selectedCharacter }) => {
   const navigate = useNavigate();
   const [showProfileModal, setShowProfileModal] = useState(false);
   const [showMobileMenu, setShowMobileMenu] = useState(false);
@@ -125,6 +125,15 @@ const Header = ({ showDashboard = true, showLogout = false, onLogout, userData, 
 
           {/* Desktop buttons */}
           <div className="hidden lg:flex items-center gap-3">
+            {showLogin && onLogin && (
+              <button
+                onClick={onLogin}
+                className="px-4 py-2 font-arcade text-xs bg-dark-panel border border-dark-border rounded-lg hover:border-neon-pink transition-colors"
+              >
+                LOGIN
+              </button>
+            )}
+            
             {showDashboard && (
               <button
                 onClick={() => navigate('/dashboard')}
@@ -165,6 +174,18 @@ const Header = ({ showDashboard = true, showLogout = false, onLogout, userData, 
       {showMobileMenu && (
         <div className="lg:hidden bg-dark-bg border-b-2 border-dark-border p-4">
           <div className="flex flex-col gap-3">
+            {showLogin && onLogin && (
+              <button
+                onClick={() => {
+                  onLogin();
+                  setShowMobileMenu(false);
+                }}
+                className="px-4 py-3 font-arcade text-sm bg-dark-panel border border-dark-border rounded-lg hover:border-neon-pink transition-colors w-full"
+              >
+                LOGIN
+              </button>
+            )}
+            
             {showDashboard && (
               <button
                 onClick={() => {

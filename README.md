@@ -1,187 +1,189 @@
-# Ascension - The Elemental Trial
+# 🔥 Ascension - The Elemental Trial
 
-A progression-based RPG game built with MERN stack, where you are a mage plunged into the depths of your own subconscious, undergoing the Trial of Ascension to become the master of all elements.
+<div align="center">
 
-## Game Concept
+![Ascension Banner](frontend/public/ascenion/ascension_full.png)
 
-You are a mage who has been plunged into the depths of your own subconscious, where you must undergo the **Trial of Ascension** to become the master of all elements. As you battle through your inner psyche, you'll encounter dragons of different elements, each representing a fundamental force of nature. Only after defeating all elemental dragons will you face your ultimate challenge: a shadowy version of your own avatar - your inner master.
+**Master the elements. Battle your inner dragons. Ascend to become the ultimate mage.**
+
+[Play Now](https://ascension2.vercel.app) | [View Demo](#screenshots) | [Report Bug](https://github.com/aabazary/ascension2/issues)
+
+</div>
+
+---
+
+## 🎮 What is Ascension?
+
+You are a mage plunged into the depths of your own subconscious, where you must undergo the **Trial of Ascension**. Battle through dragons representing each fundamental element, gather resources, upgrade your equipment, and progress through increasingly difficult tiers. 
+
+Only after mastering all elements will you face your ultimate challenge: **a shadowy version of your own avatar** - your inner master.
 
 **Can you Ascend?**
 
-## Features
+---
 
-- **User Authentication**: JWT-based auth with refresh tokens
-- **Character Management**: Up to 3 characters per user with elemental avatars
-- **Equipment System**: Ring, cloak, and belt with tier-based upgrades
-- **Elemental Dragons**: Battle 7 different elemental dragons (Fire, Water, Earth, Air, Lightning, Ice, Shadow)
-- **Avatar System**: Unlock and choose from different elemental avatars
-- **Progression**: Tier-based advancement with increasing difficulty
-- **Battle System**: 3 spells (Blast, Nova, Bolt) with crit/miss mechanics
-- **Final Boss**: Face your shadowy avatar after defeating all elemental dragons
+## ✨ Features
 
-## Tech Stack
+<div align="center">
 
-- **Backend**: Node.js, Express.js, MongoDB, JWT
-- **Frontend**: React.js
-- **Mobile**: React Native (planned)
-- **Database**: MongoDB with Mongoose
+| 🎭 **Create Your Mage** | ⚔️ **Battle Dragons** | 📈 **Progress & Upgrade** |
+|:---:|:---:|:---:|
+| Choose from 6 elemental avatars | Fight through 6 elemental tiers | Upgrade equipment and unlock new abilities |
 
-## Project Structure
+</div>
+
+### Core Gameplay
+
+- 🧙 **Multiple Characters**: Create up to 3 unique characters per account
+- 🐉 **Elemental Dragons**: Battle Fire, Water, Earth, Lightning, Ice, and Shadow dragons
+- ⚡ **Combat System**: Choose from 3 spells with unique damage, crit, and miss rates
+- 💎 **Resource Gathering**: Collect resources to upgrade your equipment
+- 🎯 **Equipment System**: Upgrade your Ring, Cloak, and Belt through 7 tiers
+- 🏆 **Leaderboard**: Compete with other mages for the highest win count
+- 🌑 **Final Boss**: Defeat your shadowy avatar in the ultimate test
+
+---
+
+## 📸 Screenshots
+
+### Dashboard - Your Command Center
+![Dashboard](frontend/public/screenshots/dashboard_ss.png)
+*Manage your characters, view stats, and begin your journey*
+
+### Gathering - Collect Resources
+![Gathering](frontend/public/screenshots/gather_ss.png)
+*Gather elemental resources to fuel your progression*
+
+### Battle - Face the Dragons
+![Battle](frontend/public/screenshots/battle_ss.png)
+*Engage in strategic battles with elemental dragons*
+
+### Upgrade - Enhance Your Power
+![Upgrade](frontend/public/screenshots/upgrade_ss.png)
+*Upgrade your equipment to increase your success rates*
+
+### Leaderboard - Compete for Glory
+![Leaderboard](frontend/public/screenshots/highscore_ss.png)
+*See how you rank against other mages*
+
+---
+
+## 🚀 Quick Start
+
+### Play Online
+Visit [https://ascension2.vercel.app](https://ascension2.vercel.app) to start playing immediately!
+
+### Run Locally
+
+```bash
+# Clone the repository
+git clone https://github.com/aabazary/ascension2.git
+cd ascension2
+
+# Install dependencies
+npm run install-all
+
+# Set up environment variables (see detailed setup guides below)
+cd backend && cp .env.example .env
+# Edit .env with your configuration
+
+# Start both frontend and backend
+npm run dev
+```
+
+Frontend runs on `http://localhost:5173` and backend on `http://localhost:5000`
+
+**For detailed setup instructions:**
+- [Backend Setup Guide](backend/README.md)
+- [Frontend Setup Guide](frontend/README.md)
+
+---
+
+## 🎯 Game Progression
+
+### Tier System
+Progress through 7 tiers (0-6), each increasing in difficulty:
+
+| Tier | Dragon Type | Equipment Level | Challenge |
+|:---:|:---|:---:|:---|
+| **0** | Dragonling | Basic | Tutorial |
+| **1-5** | Elemental Dragons | Progressive | Intermediate |
+| **6** | Shadow Avatar | Master | Ultimate Challenge |
+
+### Equipment Upgrades
+- **Ring**: Improves all activities
+- **Cloak**: Enhances gathering success
+- **Belt**: Boosts battle performance
+
+Each piece can be upgraded through 7 tiers, dramatically improving your success rates.
+
+---
+
+## 🛠️ Tech Stack
+
+- **Frontend**: React + Vite + TailwindCSS
+- **Backend**: Node.js + Express + MongoDB
+- **Deployment**: Vercel
+- **Authentication**: JWT with httpOnly cookies
+
+---
+
+## 🎨 Elemental Avatars
+
+Choose your avatar and represent your element:
+
+🔥 **Fire Mage** | 💧 **Water Mage** | ⛰️ **Earth Mage**  
+⚡ **Lightning Mage** | ❄️ **Ice Mage** | 🌑 **Shadow Mage**
+
+Unlock additional avatars as you progress through the game!
+
+---
+
+## 🏗️ Project Structure
 
 ```
 ascension2/
-├── backend/          # Express.js API
-├── frontend/         # React web app
-├── mobile/           # React Native app (planned)
-└── shared/           # Shared utilities (planned)
+├── backend/          # Express.js API & MongoDB
+├── frontend/         # React + Vite web app
+└── README.md         # You are here
 ```
 
-## Setup Instructions
+**Developer Resources:**
+- [Backend Documentation](backend/README.md) - API endpoints, database schemas, game mechanics
+- [Frontend Documentation](frontend/README.md) - Component structure, routing, state management
 
-### Prerequisites
-- Node.js (v16 or higher)
-- MongoDB (local or MongoDB Atlas)
-- Git
+---
 
-### Installation
+## 🤝 Contributing
 
-1. **Clone the repository**
-   ```bash
-   git clone <repository-url>
-   cd ascension2
-   ```
-
-2. **Install all dependencies**
-   ```bash
-   npm run install-all
-   ```
-
-3. **Set up environment variables**
-   ```bash
-   cd backend
-   cp env.example .env
-   ```
-   
-   Edit `.env` with your configuration:
-   ```
-   NODE_ENV=development
-   PORT=5000
-   MONGODB_URI=mongodb://localhost:27017/ascension2
-   JWT_SECRET=your_super_secret_jwt_key_here
-   JWT_REFRESH_SECRET=your_super_secret_refresh_key_here
-   FRONTEND_URL=http://localhost:3000
-   ```
-
-4. **Start the development servers**
-   ```bash
-   npm run dev
-   ```
-
-   This will start:
-   - Backend API on http://localhost:5000
-   - Frontend React app on http://localhost:3000
-
-### Manual Setup (Alternative)
-
-If you prefer to set up each part manually:
-
-1. **Backend Setup**
-   ```bash
-   cd backend
-   npm install
-   npm run dev
-   ```
-
-2. **Frontend Setup**
-   ```bash
-   cd frontend
-   npm install
-   npm start
-   ```
-
-## API Endpoints
-
-### Authentication
-- `POST /api/auth/register` - Register new user
-- `POST /api/auth/login` - Login user
-- `POST /api/auth/logout` - Logout user
-- `POST /api/auth/refresh` - Refresh access token
-- `GET /api/auth/me` - Get current user
-
-### Characters
-- `GET /api/characters` - Get user's characters
-- `GET /api/characters/:id` - Get specific character
-- `POST /api/characters` - Create new character
-- `PUT /api/characters/:id` - Update character
-- `DELETE /api/characters/:id` - Delete character
-
-### Game
-- `POST /api/game/battle` - Perform battle (minion/boss)
-- `POST /api/game/gather` - Perform gathering
-- `POST /api/game/elemental-battle` - Battle elemental dragons
-- `PUT /api/game/avatar` - Update character avatar
-- `GET /api/game/config` - Get game configuration
-
-## Game Mechanics
-
-### Elemental Dragons
-1. **Fire Dragon (Inferno Drake)**
-2. **Water Dragon (Tsunami Serpent)**
-3. **Earth Dragon (Mountain Wyrm)**
-4. **Lightning Dragon (Thunder Dragon)**
-5. **Ice Dragon (Frost Wyvern)**
-6. **Shadow Dragon (shadow Hydra)**
-
-
-### Equipment Progression
-1. **Ring**: Improves all activities
-2. **Cloak**: Improves gathering success
-3. **Belt**: Improves minion battle success
-
-### Success Rates (Base)
-- **Gathering**: 50% → 75% → 90% → 95% → 98% → 99%
-- **Minion**: 20% → 50% → 80% → 90% → 95% → 98%
-- **Boss**: 1% → 10% → 25% → 40% → 60% → 80%
-
-### Spells
-- **Blast**: 20 damage, 10% crit, 20% miss
-- **Nova**: 35 damage, 5% crit, 30% miss
-- **Bolt**: 15 damage, 15% crit, 15% miss
-
-## Development Roadmap
-
-### Phase 1: Core MVP ✅
-- [x] User authentication
-- [x] Character management
-- [x] Basic battle system
-- [x] Equipment system
-- [x] Resource management
-
-### Phase 2: Enhanced Features
-- [ ] Equipment upgrade system
-- [ ] Tier progression
-- [ ] Activity logging
-- [ ] Success rate calculations
-
-### Phase 3: Mobile Support
-- [ ] React Native setup
-- [ ] Mobile-optimized UI
-- [ ] Offline gameplay support
-
-### Phase 4: Advanced Features
-- [ ] Google OAuth
-- [ ] Push notifications
-- [ ] Advanced analytics
-- [ ] Testing suite
-
-## Contributing
+We welcome contributions! Please feel free to submit issues and pull requests.
 
 1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
 
-## License
+---
 
-MIT License - see LICENSE file for details
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🎨 Credits
+
+All game artwork and images were generated using **Google Gemini AI**.
+
+---
+
+<div align="center">
+
+**Ready to begin your Trial of Ascension?**
+
+[Start Playing Now](https://ascension2.vercel.app)
+
+Made with ⚡ by Ashkon Abazary
+
+</div>
